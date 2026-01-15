@@ -1,29 +1,39 @@
 name: nutritionist_app
-description: "A new Flutter project."
+description: "Offline calorie tracker with local foods & privacy focus"
 publish_to: 'none'
-version: 0.1.0
+version: 0.1.0+1  # Better to include build number for Play Store
 
 environment:
-  sdk: ^3.9.0
+  sdk: '>=3.5.0 <4.0.0'  # Safer range (Flutter 3.24+ supports up to 3.9, but keep it open)
 
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter  # ← add this
 
-  flutter_riverpod: ^3.1.0          # Latest stable (Riverpod 3.x series – highly recommended in 2026)
+  flutter_riverpod: ^3.1.0
   hive: ^2.2.3
-  hive_flutter: ^1.1.0              # Still the stable one for Flutter integration
+  hive_flutter: ^1.1.0
+  fl_chart: ^1.1.1
+  connectivity_plus: ^7.0.0
+  permission_handler: ^12.0.1
+  intl: ^0.20.2
+  go_router: ^17.0.1
 
-  fl_chart: ^1.1.1                  # Latest stable – supports all your graph needs
-
-  connectivity_plus: ^7.0.0         # Safe & up-to-date
-  permission_handler: ^12.0.1       # Good version
-  intl: ^0.20.2                     # Solid for localization
-  go_router: ^17.0.1                # Latest stable (from flutter.dev team – very mature now)
 dev_dependencies:
+  flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.4.1
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
 
 flutter:
+  generate: true  # ← add this to enable ARB generation
   uses-material-design: true
+
+  # Assets declaration (your version is correct)
+  assets:
+    - assets/icon/
+    - assets/splash/
+    - assets/data/foods.json

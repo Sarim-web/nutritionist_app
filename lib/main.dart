@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart'; // ← Important import
 import 'package:nutritionist_app/core/services/hive_service.dart';
 
 import 'routes/app_router.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Required for plugins/async in main
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Required for plugins/async in main
 
   // Initialize Hive for Flutter (uses app documents directory automatically)
   await Hive.initFlutter();
@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Nutritionist',
       debugShowCheckedModeBanner: false,
-
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.green.shade700,
@@ -46,7 +45,6 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.green.shade700,
@@ -67,9 +65,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-
       themeMode: ThemeMode.system,
-
       routerConfig: router,
     );
   }

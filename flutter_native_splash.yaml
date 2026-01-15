@@ -1,0 +1,9 @@
+flutter_native_splash:
+  color: "#ffffff"                    # background color
+  image: assets/splash/icon.png       # centered logo
+  android_12:                         # Android 12+ support
+    image: assets/splash/icon.png
+    icon_background_color: "#ffffff"
+  android: true
+  ios: true
+  web: false
