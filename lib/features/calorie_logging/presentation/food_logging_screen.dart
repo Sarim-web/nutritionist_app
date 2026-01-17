@@ -6,6 +6,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
+import '../../../../../l10n/app_localizations.dart';
+
 class FoodLoggingScreen extends StatefulWidget {
   const FoodLoggingScreen({super.key});
 
@@ -31,7 +33,6 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
 
   late final Box _logsBox;
   late final Box _surveyBox;
-  String _preferredLanguage = 'English';
   String _preferredRegion = 'Other';
   bool _isManualMode = false;
 
@@ -52,17 +53,12 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
   }
 
   void _loadPreferences() {
-    _preferredLanguage = _surveyBox.get('language', defaultValue: 'English');
     _preferredRegion = _surveyBox.get('region', defaultValue: 'Other');
     _isManualMode = _surveyBox.get('manual_mode', defaultValue: false) &&
         !_surveyBox.get('completed', defaultValue: false);
 
     setState(() {
-      if (!_isManualMode) {
-        _selectedRegionFilter = _preferredRegion;
-      } else {
-        _selectedRegionFilter = 'All'; // manual mode starts with all regions
-      }
+      _selectedRegionFilter = _isManualMode ? 'All' : _preferredRegion;
     });
   }
 
@@ -117,7 +113,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Food added!')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.foodAdded)),
         );
       }
     }
@@ -208,19 +204,19 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isPersonalized =
-        _surveyBox.get('completed', defaultValue: false);
+    final l10n = AppLocalizations.of(context)!;
+
+    final bool showTopBar = !_isManualMode;
     final todayCalories = _getTodayTotalCalories();
-    final dailyTarget = isPersonalized ? _getDailyTarget() : 0.0;
+    final dailyTarget = showTopBar ? _getDailyTarget() : 0.0;
     final remainingCalories = dailyTarget - todayCalories;
 
-    final showTopBar = isPersonalized;
     final showNewDayMessage =
         showTopBar && todayCalories == 0 && _hadLogsYesterday();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Log Food'),
+        title: Text(l10n.logFood),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -239,12 +235,12 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                   color: Theme.of(context)
                       .colorScheme
                       .primaryContainer
-                      .withOpacity(0.3),
+                      .withValues(alpha: 0.3),
                   child: Row(
                     children: [
                       Expanded(
                         child: Text(
-                          'Today: ${todayCalories.toStringAsFixed(0)} kcal',
+                          l10n.today(todayCalories.toStringAsFixed(0)),
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium
@@ -255,7 +251,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Remaining: ${remainingCalories.toStringAsFixed(0)} kcal',
+                        l10n.remaining(remainingCalories.toStringAsFixed(0)),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -272,7 +268,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                     color: Colors.blue.shade50,
                     padding: const EdgeInsets.all(12),
                     child: Text(
-                      'New day started — calories reset to 0',
+                      l10n.newDayMessage,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           color: Colors.blue.shade800,
@@ -287,15 +283,15 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Common Foods',
+                        Text(l10n.commonFoods,
                             style: Theme.of(context).textTheme.titleMedium),
                         const SizedBox(height: 8),
                         TextField(
                           controller: _searchController,
                           decoration: InputDecoration(
-                            labelText: 'Search foods...',
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.search),
+                            labelText: l10n.searchFoods,
+                            border: const OutlineInputBorder(),
+                            prefixIcon: const Icon(Icons.search),
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -304,7 +300,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                           child: Row(
                             children: [
                               ChoiceChip(
-                                label: Text('All'),
+                                label: Text(l10n.all),
                                 selected: _selectedCategoryFilter == 'All',
                                 onSelected: (_) {
                                   setState(
@@ -314,7 +310,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('Breakfast'),
+                                label: Text(l10n.breakfast),
                                 selected:
                                     _selectedCategoryFilter == 'Breakfast',
                                 onSelected: (_) {
@@ -325,7 +321,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('Lunch'),
+                                label: Text(l10n.lunch),
                                 selected: _selectedCategoryFilter == 'Lunch',
                                 onSelected: (_) {
                                   setState(
@@ -335,7 +331,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('Dinner'),
+                                label: Text(l10n.dinner),
                                 selected: _selectedCategoryFilter == 'Dinner',
                                 onSelected: (_) {
                                   setState(
@@ -345,7 +341,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('Snack'),
+                                label: Text(l10n.snack),
                                 selected: _selectedCategoryFilter == 'Snack',
                                 onSelected: (_) {
                                   setState(
@@ -355,7 +351,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('Fruit'),
+                                label: Text(l10n.fruit),
                                 selected: _selectedCategoryFilter == 'Fruit',
                                 onSelected: (_) {
                                   setState(
@@ -365,7 +361,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('Dessert'),
+                                label: Text(l10n.dessert),
                                 selected: _selectedCategoryFilter == 'Dessert',
                                 onSelected: (_) {
                                   setState(() =>
@@ -375,7 +371,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('Drink'),
+                                label: Text(l10n.drink),
                                 selected: _selectedCategoryFilter == 'Drink',
                                 onSelected: (_) {
                                   setState(
@@ -392,7 +388,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                           child: Row(
                             children: [
                               ChoiceChip(
-                                label: Text('All Regions'),
+                                label: Text(l10n.allRegions),
                                 selected: _selectedRegionFilter == 'All',
                                 onSelected: (_) {
                                   setState(() => _selectedRegionFilter = 'All');
@@ -401,7 +397,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('Pakistan'),
+                                label: Text(l10n.pakistan),
                                 selected: _selectedRegionFilter == 'Pakistan',
                                 onSelected: (_) {
                                   setState(
@@ -411,7 +407,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('India'),
+                                label: Text(l10n.india),
                                 selected: _selectedRegionFilter == 'India',
                                 onSelected: (_) {
                                   setState(
@@ -421,7 +417,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('Saudi Arabia'),
+                                label: Text(l10n.saudiArabia),
                                 selected:
                                     _selectedRegionFilter == 'Saudi Arabia',
                                 onSelected: (_) {
@@ -432,7 +428,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('UAE'),
+                                label: Text(l10n.uae),
                                 selected: _selectedRegionFilter ==
                                     'United Arab Emirates',
                                 onSelected: (_) {
@@ -443,7 +439,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('USA'),
+                                label: Text(l10n.usa),
                                 selected:
                                     _selectedRegionFilter == 'United States',
                                 onSelected: (_) {
@@ -454,7 +450,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('UK'),
+                                label: Text(l10n.uk),
                                 selected:
                                     _selectedRegionFilter == 'United Kingdom',
                                 onSelected: (_) {
@@ -465,7 +461,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('Germany'),
+                                label: Text(l10n.germany),
                                 selected: _selectedRegionFilter == 'Germany',
                                 onSelected: (_) {
                                   setState(
@@ -475,7 +471,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('France'),
+                                label: Text(l10n.france),
                                 selected: _selectedRegionFilter == 'France',
                                 onSelected: (_) {
                                   setState(
@@ -485,7 +481,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('Spain'),
+                                label: Text(l10n.spain),
                                 selected: _selectedRegionFilter == 'Spain',
                                 onSelected: (_) {
                                   setState(
@@ -495,7 +491,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('Indonesia'),
+                                label: Text(l10n.indonesia),
                                 selected: _selectedRegionFilter == 'Indonesia',
                                 onSelected: (_) {
                                   setState(() =>
@@ -505,7 +501,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(width: 8),
                               ChoiceChip(
-                                label: Text('Turkey'),
+                                label: Text(l10n.turkey),
                                 selected: _selectedRegionFilter == 'Turkey',
                                 onSelected: (_) {
                                   setState(
@@ -532,7 +528,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                             final food = _filteredFoods[index];
                             return ActionChip(
                               label: Text(
-                                '${food['name']} (${food['calories']} kcal)',
+                                '${food['name']} (${food['calories']} ${l10n.kcal})',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                               ),
@@ -549,12 +545,12 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                             children: [
                               TextFormField(
                                 controller: _foodNameController,
-                                decoration: const InputDecoration(
-                                  labelText: 'Food Name',
-                                  border: OutlineInputBorder(),
+                                decoration: InputDecoration(
+                                  labelText: l10n.foodName,
+                                  border: const OutlineInputBorder(),
                                 ),
                                 validator: (v) => (v?.trim().isEmpty ?? true)
-                                    ? 'Required'
+                                    ? l10n.required
                                     : null,
                               ),
                               const SizedBox(height: 16),
@@ -563,19 +559,18 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                                   Expanded(
                                     child: TextFormField(
                                       controller: _caloriesController,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Calories (per serving)',
-                                        border: OutlineInputBorder(),
-                                        helperText:
-                                            'Estimate is fine — use chips above',
+                                      decoration: InputDecoration(
+                                        labelText: l10n.caloriesPerServing,
+                                        border: const OutlineInputBorder(),
+                                        helperText: l10n.caloriesHelper,
                                       ),
                                       keyboardType: TextInputType.number,
                                       validator: (v) {
                                         if (v == null || v.isEmpty)
-                                          return 'Required';
+                                          return l10n.required;
                                         final n = double.tryParse(v);
                                         if (n == null || n <= 0)
-                                          return 'Positive number';
+                                          return l10n.positiveNumber;
                                         return null;
                                       },
                                     ),
@@ -584,17 +579,17 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                                   Expanded(
                                     child: TextFormField(
                                       controller: _quantityController,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Quantity',
-                                        border: OutlineInputBorder(),
+                                      decoration: InputDecoration(
+                                        labelText: l10n.quantity,
+                                        border: const OutlineInputBorder(),
                                       ),
                                       keyboardType: TextInputType.number,
                                       validator: (v) {
                                         if (v == null || v.isEmpty)
-                                          return 'Required';
+                                          return l10n.required;
                                         final n = double.tryParse(v);
                                         if (n == null || n <= 0)
-                                          return 'Positive';
+                                          return l10n.positive;
                                         return null;
                                       },
                                     ),
@@ -603,10 +598,10 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                               ),
                               const SizedBox(height: 16),
                               DropdownButtonFormField<String>(
-                                value: _mealCategory,
-                                decoration: const InputDecoration(
-                                  labelText: 'Meal Category',
-                                  border: OutlineInputBorder(),
+                                initialValue: _mealCategory,
+                                decoration: InputDecoration(
+                                  labelText: l10n.mealCategory,
+                                  border: const OutlineInputBorder(),
                                 ),
                                 items: _mealCategories
                                     .map((c) => DropdownMenuItem(
@@ -614,15 +609,15 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                                     .toList(),
                                 onChanged: (v) =>
                                     setState(() => _mealCategory = v),
-                                validator: (v) => v == null ? 'Required' : null,
+                                validator: (v) =>
+                                    v == null ? l10n.required : null,
                               ),
                               const SizedBox(height: 32),
                               FilledButton.icon(
                                 icon: const Icon(Icons.add),
-                                label: const Text('Add Food'),
+                                label: Text(l10n.addFood),
                                 style: FilledButton.styleFrom(
-                                  minimumSize: const Size.fromHeight(56),
-                                ),
+                                    minimumSize: const Size.fromHeight(56)),
                                 onPressed: _addFood,
                               ),
                             ],
@@ -631,7 +626,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                         const SizedBox(height: 24),
                         const Divider(),
                         const SizedBox(height: 16),
-                        Text('Logged Today',
+                        Text(l10n.loggedToday,
                             style: Theme.of(context).textTheme.titleLarge),
                         const SizedBox(height: 8),
                         ValueListenableBuilder<Box>(
@@ -645,10 +640,10 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                                 .toList();
 
                             if (todayLogs.isEmpty) {
-                              return const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 32),
-                                child: Center(
-                                    child: Text('No food logged today yet')),
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 32),
+                                child: Center(child: Text(l10n.noFoodToday)),
                               );
                             }
 
@@ -708,28 +703,31 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                                         ),
                                         onDismissed: (direction) {
                                           box.delete(log.keys.first);
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                                content: Text('Entry deleted')),
-                                          );
+                                          if (context.mounted) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                  content:
+                                                      Text(l10n.entryDeleted)),
+                                            );
+                                          }
                                         },
                                         child: ListTile(
                                           contentPadding:
                                               const EdgeInsets.symmetric(
                                                   horizontal: 0, vertical: 4),
                                           title: Text(
-                                            log['foodName'] ?? 'Unknown',
+                                            log['foodName'] ?? l10n.unknown,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           subtitle: Text(
-                                            '${log['quantity']} × ${log['calories']} kcal',
+                                            '${log['quantity']} × ${log['calories']} ${l10n.kcal}',
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           trailing: Text(
-                                            '${cal.toStringAsFixed(0)} kcal',
+                                            '${cal.toStringAsFixed(0)} ${l10n.kcal}',
                                             style: const TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           ),
@@ -753,7 +751,7 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.go('/'),
-        label: const Text('Done'),
+        label: Text(l10n.done),
         icon: const Icon(Icons.check),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

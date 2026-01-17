@@ -3,14 +3,18 @@ import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../../l10n/app_localizations.dart';
+
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: Text(l10n.dashboard),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -25,7 +29,6 @@ class DashboardScreen extends StatelessWidget {
                   box.get('manual_mode', defaultValue: false);
 
               if (surveyCompleted) {
-                // Personalized dashboard
                 final int age = box.get('age', defaultValue: 30);
                 final String gender = box.get('gender', defaultValue: 'Other');
                 final double heightCm =
@@ -64,17 +67,17 @@ class DashboardScreen extends StatelessWidget {
                         : Colors.red;
 
                 final String progressMessage = progress < 0.8
-                    ? 'Good pace — keep going!'
+                    ? l10n.goodPace
                     : progress < 1.0
-                        ? 'Almost there — stay mindful'
-                        : 'Over target — consider lighter choices';
+                        ? l10n.almostThere
+                        : l10n.overTarget;
 
                 return SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Daily Progress',
+                        l10n.dailyProgress,
                         style: Theme.of(context)
                             .textTheme
                             .headlineMedium
@@ -95,7 +98,7 @@ class DashboardScreen extends StatelessWidget {
                               backgroundColor: Theme.of(context)
                                   .colorScheme
                                   .primaryContainer
-                                  .withOpacity(0.3),
+                                  .withValues(alpha: 0.3),
                               valueColor:
                                   AlwaysStoppedAnimation<Color>(progressColor),
                             ),
@@ -104,7 +107,7 @@ class DashboardScreen extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                '${loggedToday.toStringAsFixed(0)}',
+                                loggedToday.toStringAsFixed(0),
                                 style: Theme.of(context)
                                     .textTheme
                                     .displayMedium
@@ -114,7 +117,7 @@ class DashboardScreen extends StatelessWidget {
                                     ),
                               ),
                               Text(
-                                'of ${dailyTarget.toStringAsFixed(0)} kcal',
+                                l10n.ofTarget(dailyTarget.toStringAsFixed(0)),
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ],
@@ -138,23 +141,25 @@ class DashboardScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _ProfileRow(
-                                  label: 'Target',
+                                  label: l10n.target,
                                   value:
-                                      '${dailyTarget.toStringAsFixed(0)} kcal/day'),
-                              _ProfileRow(label: 'Goal', value: goal),
-                              _ProfileRow(label: 'Activity', value: activity),
+                                      '${dailyTarget.toStringAsFixed(0)} ${l10n.kcalDay}'),
+                              _ProfileRow(label: l10n.goal, value: goal),
+                              _ProfileRow(
+                                  label: l10n.activity, value: activity),
                               if (targetWeightKg != null)
                                 _ProfileRow(
-                                    label: 'Target Weight',
+                                    label: l10n.targetWeight,
                                     value:
                                         '${targetWeightKg.toStringAsFixed(1)} kg'),
                               _ProfileRow(
-                                  label: 'Dietary Preference',
+                                  label: l10n.dietaryPreference,
                                   value: dietaryPref),
                               if (restrictions != null &&
                                   restrictions.isNotEmpty)
                                 _ProfileRow(
-                                    label: 'Restrictions', value: restrictions),
+                                    label: l10n.restrictions,
+                                    value: restrictions),
                             ],
                           ),
                         ),
@@ -165,12 +170,12 @@ class DashboardScreen extends StatelessWidget {
                         children: [
                           FilledButton.icon(
                             icon: const Icon(Icons.edit_outlined),
-                            label: const Text('Edit Profile'),
+                            label: Text(l10n.editProfile),
                             onPressed: () => context.go('/survey'),
                           ),
                           OutlinedButton.icon(
                             icon: const Icon(Icons.add),
-                            label: const Text('Log Food'),
+                            label: Text(l10n.logFoodButton),
                             onPressed: () => context.go('/log-food'),
                           ),
                         ],
@@ -179,38 +184,38 @@ class DashboardScreen extends StatelessWidget {
                       OutlinedButton.icon(
                         icon:
                             const Icon(Icons.delete_outline, color: Colors.red),
-                        label: const Text('Start Fresh (Clear Profile)',
-                            style: TextStyle(color: Colors.red)),
+                        label: Text(l10n.startFresh,
+                            style: const TextStyle(color: Colors.red)),
                         style: OutlinedButton.styleFrom(
                             side: const BorderSide(color: Colors.red)),
                         onPressed: () async {
                           final confirm = await showDialog<bool>(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: const Text('Clear Profile?'),
-                              content: const Text(
-                                'This will remove all saved profile info and calorie logs. You can take the survey again for a fresh start.',
-                              ),
+                              title: Text(l10n.clearProfileTitle),
+                              content: Text(l10n.clearProfileDesc),
                               actions: [
                                 TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, false),
-                                    child: const Text('Cancel')),
+                                  onPressed: () =>
+                                      Navigator.pop(context, false),
+                                  child: Text(l10n.cancel),
+                                ),
                                 TextButton(
                                   onPressed: () => Navigator.pop(context, true),
-                                  child: const Text('Clear',
-                                      style: TextStyle(color: Colors.red)),
+                                  child: Text(
+                                    l10n.clear,
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
                                 ),
                               ],
                             ),
                           );
 
-                          if (confirm == true) {
+                          if (confirm == true && context.mounted) {
                             await box.clear();
                             await Hive.box('foodLogs').clear();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Profile and logs cleared')),
+                              SnackBar(content: Text(l10n.profileCleared)),
                             );
                           }
                         },
@@ -229,18 +234,18 @@ class DashboardScreen extends StatelessWidget {
                             size: 80, color: Colors.blue),
                         const SizedBox(height: 24),
                         Text(
-                          'Manual Mode Active',
+                          l10n.manualModeActive,
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         const SizedBox(height: 16),
-                        const Text(
-                          'You are tracking calories without a personalized goal.\nLog foods freely — you can take the survey anytime for custom targets.',
+                        Text(
+                          l10n.manualModeDesc,
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 40),
                         FilledButton.icon(
                           icon: const Icon(Icons.add),
-                          label: const Text('Log Food'),
+                          label: Text(l10n.logFoodButton),
                           onPressed: () => context.go('/log-food'),
                         ),
                         const SizedBox(height: 16),
@@ -249,8 +254,7 @@ class DashboardScreen extends StatelessWidget {
                             await box.delete('manual_mode');
                             if (context.mounted) context.go('/survey');
                           },
-                          child: const Text(
-                              'Switch to Personalized Mode (Take Survey)'),
+                          child: Text(l10n.switchToPersonalized),
                         ),
                       ],
                     ),
@@ -270,19 +274,19 @@ class DashboardScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          'Personalize your journey',
+                          l10n.personalizeJourney,
                           style: Theme.of(context).textTheme.headlineSmall,
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Complete the quick profile to get a custom calorie goal and better recommendations.',
+                          l10n.takeSurveyDesc,
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 40),
                         FilledButton.icon(
                           icon: const Icon(Icons.assessment_outlined),
-                          label: const Text('Take Profile Survey'),
+                          label: Text(l10n.takeSurvey),
                           onPressed: () => context.go('/survey'),
                         ),
                         const SizedBox(height: 16),
@@ -291,7 +295,7 @@ class DashboardScreen extends StatelessWidget {
                             await box.put('manual_mode', true);
                             if (context.mounted) context.go('/log-food');
                           },
-                          child: const Text('Continue in Manual Mode'),
+                          child: Text(l10n.continueManual),
                         ),
                       ],
                     ),
