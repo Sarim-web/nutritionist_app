@@ -306,4 +306,19 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get profileSaved => 'پروفائل کامیابی سے محفوظ ہو گیا';
+
+  @override
+  String get basicInfo => 'بنیادی معلومات';
+
+  @override
+  String get goalsAndLifestyle => 'ہدف اور طرز زندگی';
+
+  @override
+  String get preferences => 'ترجیحات';
+
+  @override
+  String get location => 'مقام';
+
+  @override
+  String get next => 'اگلا';
 }

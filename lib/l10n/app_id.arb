@@ -94,5 +94,11 @@
   "updateProfileTitle": "Perbarui Profil?",
   "updateProfileDesc": "Anda sudah memiliki profil tersimpan. Memperbarui akan menggantikan informasi lama. Lanjutkan?",
   "update": "Perbarui",
-  "profileSaved": "Profil berhasil disimpan"
+  "profileSaved": "Profil berhasil disimpan",
+  "basicInfo": "Informasi Dasar",
+  "goalsAndLifestyle": "Tujuan & Gaya Hidup",
+  "preferences": "Preferensi",
+  "location": "Lokasi",
+  "next": "Berikutnya"
+
 }

@@ -94,5 +94,11 @@
   "updateProfileTitle": "Profil güncellensin mi?",
   "updateProfileDesc": "Zaten kayıtlı bir profiliniz var. Güncelleme eski bilgilerin yerine geçecektir. Devam edilsin mi?",
   "update": "Güncelle",
-  "profileSaved": "Profil başarıyla kaydedildi"
+  "profileSaved": "Profil başarıyla kaydedildi",
+  "basicInfo": "Temel Bilgiler",
+  "goalsAndLifestyle": "Hedefler ve Yaşam Tarzı",
+  "preferences": "Tercihler",
+  "location": "Konum",
+  "next": "İleri"
+
 }

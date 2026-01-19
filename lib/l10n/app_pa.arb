@@ -94,5 +94,11 @@
   "updateProfileTitle": "پروفائل اپ ڈیٹ کرو؟",
   "updateProfileDesc": "پرانا پروفائل بدل جائے گا۔ جاری رکھنا اے؟",
   "update": "اپ ڈیٹ",
-  "profileSaved": "پروفائل کامیابی نال محفوظ ہو گیا"
+  "profileSaved": "پروفائل کامیابی نال محفوظ ہو گیا",
+  "basicInfo": "بنیادی معلومات",
+  "goalsAndLifestyle": "اہداف تے طرزِ زندگی",
+  "preferences": "ترجیحات",
+  "location": "مقام",
+  "next": "اگلا"
+
 }

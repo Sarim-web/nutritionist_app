@@ -308,4 +308,19 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get profileSaved => 'Profil berhasil disimpan';
+
+  @override
+  String get basicInfo => 'Informasi Dasar';
+
+  @override
+  String get goalsAndLifestyle => 'Tujuan & Gaya Hidup';
+
+  @override
+  String get preferences => 'Preferensi';
+
+  @override
+  String get location => 'Lokasi';
+
+  @override
+  String get next => 'Berikutnya';
 }

@@ -94,5 +94,11 @@
   "updateProfileTitle": "Mettre à jour le profil ?",
   "updateProfileDesc": "Vous avez déjà un profil enregistré. La mise à jour remplacera les anciennes informations. Continuer ?",
   "update": "Mettre à jour",
-  "profileSaved": "Profil enregistré avec succès"
+  "profileSaved": "Profil enregistré avec succès",
+  "basicInfo": "Informations de base",
+  "goalsAndLifestyle": "Objectifs et mode de vie",
+  "preferences": "Préférences",
+  "location": "Localisation",
+  "next": "Suivant"
+
 }

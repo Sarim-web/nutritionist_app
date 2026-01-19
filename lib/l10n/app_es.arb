@@ -94,5 +94,12 @@
   "updateProfileTitle": "¿Actualizar perfil?",
   "updateProfileDesc": "Ya tienes un perfil guardado. Actualizarlo reemplazará la información anterior. ¿Continuar?",
   "update": "Actualizar",
-  "profileSaved": "Perfil guardado correctamente"
+  "profileSaved": "Perfil guardado correctamente",
+  "basicInfo": "Información básica",
+  "goalsAndLifestyle": "Objetivos y estilo de vida",
+  "preferences": "Preferencias",
+  "location": "Ubicación",
+  "next": "Siguiente"
+
+
 }

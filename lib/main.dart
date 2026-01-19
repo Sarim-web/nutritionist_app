@@ -5,10 +5,13 @@ import 'package:go_router/go_router.dart';
 
 import 'l10n/app_localizations.dart';
 
-// Correct relative imports based on your folder structure
+import 'core/widgets/scaffold_with_nav_bar.dart'; // ← new import
+
 import 'features/dashboard/presentation/dashboard_screen.dart';
 import 'features/survey/presentation/survey_screen.dart';
 import 'features/calorie_logging/presentation/food_logging_screen.dart';
+import 'features/history/presentation/history_screen.dart'; // ← new
+import 'features/profile/presentation/profile_screen.dart'; // ← new
 import 'features/welcome/presentation/welcome_screen.dart';
 
 void main() async {
@@ -29,14 +32,13 @@ class MyApp extends StatelessWidget {
       builder: (context, box, _) {
         String languageCode = box.get('language_code', defaultValue: 'en');
 
-        // Clean up any old full-name saves (backward compatibility)
+        // Backward compatibility for old saves
         if (languageCode == 'English') languageCode = 'en';
         if (languageCode == 'Urdu') languageCode = 'ur';
 
         final Locale locale = Locale(languageCode);
 
-        print('Loaded language code from Hive: $languageCode');
-        print('Applied locale: $locale');
+        print('Loaded language: $languageCode → $locale');
 
         return MaterialApp.router(
           locale: locale,
@@ -47,19 +49,17 @@ class MyApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: AppLocalizations.supportedLocales,
-          localeResolutionCallback: (deviceLocale, supportedLocales) {
-            // Enforce the user's saved choice over device locale
-            print('Locale resolution: using saved $languageCode');
-            return supportedLocales.firstWhere(
+          localeResolutionCallback: (deviceLocale, supported) {
+            return supported.firstWhere(
               (l) => l.languageCode == languageCode,
               orElse: () => const Locale('en'),
             );
           },
           builder: (context, child) {
-            final effectiveLocale = Localizations.localeOf(context);
-            final isRtl = effectiveLocale.languageCode == 'ur' ||
-                effectiveLocale.languageCode == 'ar' ||
-                effectiveLocale.languageCode == 'pa';
+            final loc = Localizations.localeOf(context);
+            final isRtl = loc.languageCode == 'ur' ||
+                loc.languageCode == 'ar' ||
+                loc.languageCode == 'pa';
 
             return Directionality(
               textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
@@ -81,17 +81,18 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  String? _getFontFamily(String languageCode) {
-    switch (languageCode) {
+  String? _getFontFamily(String code) {
+    switch (code) {
       case 'ur':
+      case 'pa':
         return 'NotoNastaliqUrdu';
       case 'ar':
-        return 'NotoSansArabic'; // Add this font in pubspec.yaml if needed
-      case 'pa':
+        return 'NotoSansArabic';
       case 'hi':
-        return 'NotoSansDevanagari'; // Optional – add font if you want better Hindi/Punjabi
+      case 'pa': // fallback if separate font added later
+        return 'NotoSansDevanagari';
       default:
-        return null; // Use system default for others
+        return null;
     }
   }
 
@@ -106,21 +107,38 @@ class MyApp extends StatelessWidget {
           return null;
         },
         routes: [
+          // Welcome & Survey are outside shell (no bottom nav)
           GoRoute(
             path: '/welcome',
             builder: (context, state) => const WelcomeScreen(),
           ),
           GoRoute(
-            path: '/',
-            builder: (context, state) => const DashboardScreen(),
-          ),
-          GoRoute(
             path: '/survey',
             builder: (context, state) => const SurveyScreen(),
           ),
-          GoRoute(
-            path: '/log-food',
-            builder: (context, state) => const FoodLoggingScreen(),
+
+          // Shell with bottom nav for main app
+          ShellRoute(
+            builder: (context, state, child) =>
+                ScaffoldWithNavBar(child: child),
+            routes: [
+              GoRoute(
+                path: '/',
+                builder: (context, state) => const DashboardScreen(),
+              ),
+              GoRoute(
+                path: '/log-food',
+                builder: (context, state) => const FoodLoggingScreen(),
+              ),
+              GoRoute(
+                path: '/history',
+                builder: (context, state) => const HistoryScreen(),
+              ),
+              GoRoute(
+                path: '/profile',
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
           ),
         ],
       );

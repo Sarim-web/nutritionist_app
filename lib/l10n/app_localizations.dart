@@ -683,6 +683,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile saved successfully'**
   String get profileSaved;
+
+  /// No description provided for @basicInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Info'**
+  String get basicInfo;
+
+  /// No description provided for @goalsAndLifestyle.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals & Lifestyle'**
+  String get goalsAndLifestyle;
+
+  /// No description provided for @preferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get preferences;
+
+  /// No description provided for @location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
 }
 
 class _AppLocalizationsDelegate

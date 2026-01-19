@@ -309,4 +309,19 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get profileSaved => 'Profil başarıyla kaydedildi';
+
+  @override
+  String get basicInfo => 'Temel Bilgiler';
+
+  @override
+  String get goalsAndLifestyle => 'Hedefler ve Yaşam Tarzı';
+
+  @override
+  String get preferences => 'Tercihler';
+
+  @override
+  String get location => 'Konum';
+
+  @override
+  String get next => 'İleri';
 }

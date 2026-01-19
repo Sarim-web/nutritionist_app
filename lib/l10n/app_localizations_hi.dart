@@ -309,4 +309,19 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get profileSaved => 'प्रोफ़ाइल सफलतापूर्वक सहेजी गई';
+
+  @override
+  String get basicInfo => 'मूल जानकारी';
+
+  @override
+  String get goalsAndLifestyle => 'लक्ष्य और जीवनशैली';
+
+  @override
+  String get preferences => 'पसंद';
+
+  @override
+  String get location => 'स्थान';
+
+  @override
+  String get next => 'आगे';
 }

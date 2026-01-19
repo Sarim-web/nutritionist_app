@@ -304,4 +304,19 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get profileSaved => 'پروفائل کامیابی نال محفوظ ہو گیا';
+
+  @override
+  String get basicInfo => 'بنیادی معلومات';
+
+  @override
+  String get goalsAndLifestyle => 'اہداف تے طرزِ زندگی';
+
+  @override
+  String get preferences => 'ترجیحات';
+
+  @override
+  String get location => 'مقام';
+
+  @override
+  String get next => 'اگلا';
 }

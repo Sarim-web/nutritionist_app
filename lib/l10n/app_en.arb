@@ -109,5 +109,10 @@
   "updateProfileDesc": "You already have a saved profile. Updating will replace the old information. Continue?",
   "cancel": "Cancel",
   "update": "Update",
-  "profileSaved": "Profile saved successfully"
+  "profileSaved": "Profile saved successfully",
+  "basicInfo": "Basic Info",
+  "goalsAndLifestyle": "Goals & Lifestyle",
+  "preferences": "Preferences",
+  "location": "Location",
+  "next": "Next"
 }

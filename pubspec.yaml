@@ -9,8 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  image_picker: ^1.1.12
   flutter_localizations:
     sdk: flutter  # ← add this
+
 
   flutter_riverpod: ^3.1.0
   hive: ^2.2.3
@@ -37,6 +39,7 @@ flutter:
     - assets/icon/
     - assets/splash/
     - assets/data/foods.json
+    - assets/avatars/
 fonts:
     - family: NotoNastaliqUrdu
       fonts:

@@ -310,4 +310,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profileSaved => 'Perfil guardado correctamente';
+
+  @override
+  String get basicInfo => 'Información básica';
+
+  @override
+  String get goalsAndLifestyle => 'Objetivos y estilo de vida';
+
+  @override
+  String get preferences => 'Preferencias';
+
+  @override
+  String get location => 'Ubicación';
+
+  @override
+  String get next => 'Siguiente';
 }

@@ -307,4 +307,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileSaved => 'تم حفظ الملف الشخصي بنجاح';
+
+  @override
+  String get basicInfo => 'المعلومات الأساسية';
+
+  @override
+  String get goalsAndLifestyle => 'الأهداف ونمط الحياة';
+
+  @override
+  String get preferences => 'التفضيلات';
+
+  @override
+  String get location => 'الموقع';
+
+  @override
+  String get next => 'التالي';
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import '../../../../../l10n/app_localizations.dart'; // Adjust path if needed
+import '../../../../../l10n/app_localizations.dart';
 
 class SurveyScreen extends StatefulWidget {
   const SurveyScreen({super.key});
@@ -12,7 +12,11 @@ class SurveyScreen extends StatefulWidget {
 }
 
 class _SurveyScreenState extends State<SurveyScreen> {
-  final _formKey = GlobalKey<FormState>();
+  int _currentStep = 0;
+  final _formKeys = List.generate(4, (_) => GlobalKey<FormState>());
+
+  // ──────────────────────────────────────────────
+  // Your existing fields (copy-paste from your old version)
   final _ageController = TextEditingController();
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
@@ -115,7 +119,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
   Future<bool> _confirmOverwrite() async {
     final alreadyCompleted = _surveyBox.get('completed', defaultValue: false);
-
     if (!alreadyCompleted) return true;
 
     final l10n = AppLocalizations.of(context)!;
@@ -141,37 +144,51 @@ class _SurveyScreenState extends State<SurveyScreen> {
   }
 
   Future<void> _saveSurvey() async {
-    if (_formKey.currentState!.validate()) {
-      final confirmed = await _confirmOverwrite();
-      if (!confirmed) return;
-
-      await _surveyBox.putAll({
-        'age': int.tryParse(_ageController.text) ?? 30,
-        'gender': _gender ?? 'Other',
-        'heightCm': double.tryParse(_heightController.text) ?? 170.0,
-        'weightKg': double.tryParse(_weightController.text) ?? 70.0,
-        'targetWeightKg': double.tryParse(_targetWeightController.text),
-        'goal': _goal ?? 'Maintain weight',
-        'activityLevel': _activityLevel ?? 'Sedentary',
-        'confidence': _confidence,
-        'dietaryPreference': _dietaryPreference ?? 'None / No preference',
-        'restrictions': _restrictionsController.text.trim().isNotEmpty
-            ? _restrictionsController.text.trim()
-            : null,
-        'region': _selectedRegion ?? 'Other',
-        'completed': true,
-        'timestamp': DateTime.now().toIso8601String(),
-      });
-
-      if (!mounted) return;
-
-      final l10n = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.profileSaved)),
-      );
-
-      context.go('/');
+    // Final validation (optional: check all forms again)
+    bool isValid = true;
+    for (var key in _formKeys) {
+      if (key.currentState != null && !key.currentState!.validate()) {
+        isValid = false;
+      }
     }
+    if (!isValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(AppLocalizations.of(context)!.required ??
+                'Please complete all required fields')),
+      );
+      return;
+    }
+
+    final confirmed = await _confirmOverwrite();
+    if (!confirmed) return;
+
+    await _surveyBox.putAll({
+      'age': int.tryParse(_ageController.text) ?? 30,
+      'gender': _gender ?? 'Other',
+      'heightCm': double.tryParse(_heightController.text) ?? 170.0,
+      'weightKg': double.tryParse(_weightController.text) ?? 70.0,
+      'targetWeightKg': double.tryParse(_targetWeightController.text),
+      'goal': _goal ?? 'Maintain weight',
+      'activityLevel': _activityLevel ?? 'Sedentary',
+      'confidence': _confidence,
+      'dietaryPreference': _dietaryPreference ?? 'None / No preference',
+      'restrictions': _restrictionsController.text.trim().isNotEmpty
+          ? _restrictionsController.text.trim()
+          : null,
+      'region': _selectedRegion ?? 'Other',
+      'completed': true,
+      'timestamp': DateTime.now().toIso8601String(),
+    });
+
+    if (!mounted) return;
+
+    final l10n = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.profileSaved)),
+    );
+
+    context.go('/');
   }
 
   @override
@@ -183,38 +200,54 @@ class _SurveyScreenState extends State<SurveyScreen> {
         title: Text(l10n.yourProfile),
         centerTitle: true,
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
+      body: Stepper(
+        currentStep: _currentStep,
+        onStepContinue: () {
+          final form = _formKeys[_currentStep].currentState;
+          if (form != null && form.validate()) {
+            if (_currentStep < 3) {
+              setState(() => _currentStep += 1);
+            } else {
+              _saveSurvey();
+            }
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content:
+                      Text(l10n.required ?? 'Please fill required fields')),
+            );
+          }
+        },
+        onStepCancel: () {
+          if (_currentStep > 0) {
+            setState(() => _currentStep -= 1);
+          } else {
+            context.pop();
+          }
+        },
+        steps: [
+          // Step 1: Personal Basics
+          Step(
+            title: Text('Personal Basics'),
+            content: Form(
+              key: _formKeys[0],
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextFormField(
                     controller: _ageController,
-                    decoration: InputDecoration(
-                      labelText: l10n.age,
-                      border: const OutlineInputBorder(),
-                    ),
+                    decoration: InputDecoration(labelText: l10n.age),
                     keyboardType: TextInputType.number,
                     validator: (v) {
                       if (v == null || v.isEmpty) return l10n.required;
                       final n = int.tryParse(v);
-                      if (n == null || n < 18 || n > 100) {
-                        return '18–100';
-                      }
+                      if (n == null || n < 8 || n > 100) return '8–100';
                       return null;
                     },
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     value: _gender,
-                    decoration: InputDecoration(
-                      labelText: l10n.gender,
-                      border: const OutlineInputBorder(),
-                    ),
+                    decoration: InputDecoration(labelText: l10n.gender),
                     items: _genders
                         .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                         .toList(),
@@ -224,62 +257,43 @@ class _SurveyScreenState extends State<SurveyScreen> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _heightController,
-                    decoration: InputDecoration(
-                      labelText: l10n.heightCm,
-                      border: const OutlineInputBorder(),
-                    ),
+                    decoration: InputDecoration(labelText: l10n.heightCm),
                     keyboardType: TextInputType.number,
                     validator: (v) {
                       if (v == null || v.isEmpty) return l10n.required;
                       final n = double.tryParse(v);
-                      if (n == null || n < 100 || n > 250) {
-                        return '100–250 cm';
-                      }
+                      if (n == null || n < 100 || n > 250) return '100–250 cm';
                       return null;
                     },
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _weightController,
-                    decoration: InputDecoration(
-                      labelText: l10n.currentWeightKg,
-                      border: const OutlineInputBorder(),
-                    ),
+                    decoration:
+                        InputDecoration(labelText: l10n.currentWeightKg),
                     keyboardType: TextInputType.number,
                     validator: (v) {
                       if (v == null || v.isEmpty) return l10n.required;
                       final n = double.tryParse(v);
-                      if (n == null || n < 30 || n > 200) {
-                        return '30–200 kg';
-                      }
+                      if (n == null || n < 30 || n > 200) return '30–200 kg';
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _targetWeightController,
-                    decoration: InputDecoration(
-                      labelText: l10n.targetWeightKgOptional,
-                      helperText: l10n.targetWeightHelper,
-                      border: const OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                    validator: (v) {
-                      if (v == null || v.isEmpty) return null;
-                      final n = double.tryParse(v);
-                      if (n == null || n < 30 || n > 200) {
-                        return 'Invalid weight';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          ),
+
+          // Step 2: Goals & Activity
+          Step(
+            title: Text('Goals & Activity'),
+            content: Form(
+              key: _formKeys[1],
+              child: Column(
+                children: [
                   DropdownButtonFormField<String>(
                     value: _goal,
-                    decoration: InputDecoration(
-                      labelText: l10n.mainGoal,
-                      border: const OutlineInputBorder(),
-                    ),
+                    decoration: InputDecoration(labelText: l10n.mainGoal),
                     items: _goals
                         .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                         .toList(),
@@ -289,10 +303,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     value: _activityLevel,
-                    decoration: InputDecoration(
-                      labelText: l10n.activityLevel,
-                      border: const OutlineInputBorder(),
-                    ),
+                    decoration: InputDecoration(labelText: l10n.activityLevel),
                     items: _activityLevels
                         .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                         .toList(),
@@ -300,12 +311,38 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     validator: (v) => v == null ? l10n.required : null,
                   ),
                   const SizedBox(height: 24),
+                  Text(l10n.guidanceQuestion),
+                  Slider(
+                    value: _confidence,
+                    min: 0.0,
+                    max: 1.0,
+                    divisions: 10,
+                    label: (_confidence * 10).round().toString(),
+                    onChanged: (v) => setState(() => _confidence = v),
+                  ),
+                  Text(
+                    _confidence < 0.4
+                        ? l10n.guidanceLow
+                        : _confidence > 0.6
+                            ? l10n.guidanceHigh
+                            : l10n.guidanceMedium,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Step 3: Preferences
+          Step(
+            title: Text('Preferences'),
+            content: Form(
+              key: _formKeys[2],
+              child: Column(
+                children: [
                   DropdownButtonFormField<String>(
                     value: _dietaryPreference,
-                    decoration: InputDecoration(
-                      labelText: l10n.dietaryPreference,
-                      border: const OutlineInputBorder(),
-                    ),
+                    decoration:
+                        InputDecoration(labelText: l10n.dietaryPreference),
                     items: _dietaryPreferences
                         .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                         .toList(),
@@ -317,37 +354,26 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     decoration: InputDecoration(
                       labelText: l10n.restrictionsLabel,
                       helperText: l10n.restrictionsHelper,
-                      border: const OutlineInputBorder(),
                     ),
-                    maxLines: 2,
+                    maxLines: 3,
                   ),
-                  const SizedBox(height: 24),
-                  Text(
-                    l10n.guidanceQuestion,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  Text(
-                    _confidence < 0.4
-                        ? l10n.guidanceLow
-                        : _confidence > 0.6
-                            ? l10n.guidanceHigh
-                            : l10n.guidanceMedium,
-                  ),
-                  Slider(
-                    value: _confidence,
-                    min: 0.0,
-                    max: 1.0,
-                    divisions: 10,
-                    label: (_confidence * 10).round().toString(),
-                    onChanged: (v) => setState(() => _confidence = v),
-                  ),
-                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ),
+
+          // Step 4: Region & Target
+          Step(
+            title: Text('Region & Target'),
+            content: Form(
+              key: _formKeys[3],
+              child: Column(
+                children: [
                   DropdownButtonFormField<String>(
                     value: _selectedRegion,
                     decoration: InputDecoration(
                       labelText: l10n.regionCountry,
                       helperText: l10n.regionHelper,
-                      border: const OutlineInputBorder(),
                     ),
                     items: _regions
                         .map((r) => DropdownMenuItem(value: r, child: Text(r)))
@@ -355,23 +381,27 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     onChanged: (v) => setState(() => _selectedRegion = v),
                     validator: (v) => v == null ? l10n.required : null,
                   ),
-                  const SizedBox(height: 40),
-                  FilledButton(
-                    onPressed: _saveSurvey,
-                    style: FilledButton.styleFrom(
-                        minimumSize: const Size.fromHeight(56)),
-                    child: Text(l10n.saveContinue),
-                  ),
                   const SizedBox(height: 16),
-                  TextButton(
-                    onPressed: () => context.go('/'),
-                    child: Text(l10n.skipManual),
+                  TextFormField(
+                    controller: _targetWeightController,
+                    decoration: InputDecoration(
+                      labelText: l10n.targetWeightKgOptional,
+                      helperText: l10n.targetWeightHelper,
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (v) {
+                      if (v == null || v.isEmpty) return null;
+                      final n = double.tryParse(v);
+                      if (n == null || n < 30 || n > 200)
+                        return 'Invalid weight';
+                      return null;
+                    },
                   ),
                 ],
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

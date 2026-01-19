@@ -94,5 +94,11 @@
   "updateProfileTitle": "Profil aktualisieren?",
   "updateProfileDesc": "Sie haben bereits ein gespeichertes Profil. Durch die Aktualisierung werden die alten Informationen ersetzt. Fortfahren?",
   "update": "Aktualisieren",
-  "profileSaved": "Profil erfolgreich gespeichert"
+  "profileSaved": "Profil erfolgreich gespeichert",
+  "basicInfo": "Grundinformationen",
+  "goalsAndLifestyle": "Ziele und Lebensstil",
+  "preferences": "Einstellungen",
+  "location": "Standort",
+  "next": "Weiter"
+
 }
