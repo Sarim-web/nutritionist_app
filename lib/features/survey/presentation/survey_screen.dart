@@ -228,7 +228,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
         steps: [
           // Step 1: Personal Basics
           Step(
-            title: Text('Personal Basics'),
+            title: const Text('Personal Basics'),
             content: Form(
               key: _formKeys[0],
               child: Column(
@@ -246,7 +246,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: _gender,
+                    initialValue: _gender,
                     decoration: InputDecoration(labelText: l10n.gender),
                     items: _genders
                         .map((e) => DropdownMenuItem(value: e, child: Text(e)))
@@ -286,13 +286,13 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
           // Step 2: Goals & Activity
           Step(
-            title: Text('Goals & Activity'),
+            title: const Text('Goals & Activity'),
             content: Form(
               key: _formKeys[1],
               child: Column(
                 children: [
                   DropdownButtonFormField<String>(
-                    value: _goal,
+                    initialValue: _goal,
                     decoration: InputDecoration(labelText: l10n.mainGoal),
                     items: _goals
                         .map((e) => DropdownMenuItem(value: e, child: Text(e)))
@@ -302,7 +302,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: _activityLevel,
+                    initialValue: _activityLevel,
                     decoration: InputDecoration(labelText: l10n.activityLevel),
                     items: _activityLevels
                         .map((e) => DropdownMenuItem(value: e, child: Text(e)))
@@ -334,13 +334,13 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
           // Step 3: Preferences
           Step(
-            title: Text('Preferences'),
+            title: const Text('Preferences'),
             content: Form(
               key: _formKeys[2],
               child: Column(
                 children: [
                   DropdownButtonFormField<String>(
-                    value: _dietaryPreference,
+                    initialValue: _dietaryPreference,
                     decoration:
                         InputDecoration(labelText: l10n.dietaryPreference),
                     items: _dietaryPreferences
@@ -364,13 +364,13 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
           // Step 4: Region & Target
           Step(
-            title: Text('Region & Target'),
+            title: const Text('Region & Target'),
             content: Form(
               key: _formKeys[3],
               child: Column(
                 children: [
                   DropdownButtonFormField<String>(
-                    value: _selectedRegion,
+                    initialValue: _selectedRegion,
                     decoration: InputDecoration(
                       labelText: l10n.regionCountry,
                       helperText: l10n.regionHelper,
@@ -392,8 +392,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     validator: (v) {
                       if (v == null || v.isEmpty) return null;
                       final n = double.tryParse(v);
-                      if (n == null || n < 30 || n > 200)
+                      if (n == null || n < 30 || n > 200) {
                         return 'Invalid weight';
+                      }
                       return null;
                     },
                   ),

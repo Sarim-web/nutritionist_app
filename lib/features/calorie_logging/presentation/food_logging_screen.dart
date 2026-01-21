@@ -566,11 +566,13 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                                       ),
                                       keyboardType: TextInputType.number,
                                       validator: (v) {
-                                        if (v == null || v.isEmpty)
+                                        if (v == null || v.isEmpty) {
                                           return l10n.required;
+                                        }
                                         final n = double.tryParse(v);
-                                        if (n == null || n <= 0)
+                                        if (n == null || n <= 0) {
                                           return l10n.positiveNumber;
+                                        }
                                         return null;
                                       },
                                     ),
@@ -585,11 +587,13 @@ class _FoodLoggingScreenState extends State<FoodLoggingScreen> {
                                       ),
                                       keyboardType: TextInputType.number,
                                       validator: (v) {
-                                        if (v == null || v.isEmpty)
+                                        if (v == null || v.isEmpty) {
                                           return l10n.required;
+                                        }
                                         final n = double.tryParse(v);
-                                        if (n == null || n <= 0)
+                                        if (n == null || n <= 0) {
                                           return l10n.positive;
+                                        }
                                         return null;
                                       },
                                     ),

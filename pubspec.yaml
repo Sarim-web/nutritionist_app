@@ -1,49 +1,53 @@
 name: nutritionist_app
 description: "Offline calorie tracker with local foods & privacy focus"
 publish_to: 'none'
-version: 0.1.0+1  # Better to include build number for Play Store
+version: 0.1.0+1
 
 environment:
-  sdk: '>=3.5.0 <4.0.0'  # Safer range (Flutter 3.24+ supports up to 3.9, but keep it open)
+  sdk: '>=3.5.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  image_picker: ^1.1.12
+
+  # Localization (required for ARB / gen-l10n)
   flutter_localizations:
-    sdk: flutter  # ← add this
+    sdk: flutter
+  intl: ^0.20.2
 
-
-  flutter_riverpod: ^3.1.0
+  # Core packages
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  fl_chart: ^1.1.1
+  go_router: ^17.0.1        # Stable version (17.0.1 is very new — optional downgrade if issues)
+  image_picker: ^1.1.2
+  fl_chart: ^1.1.1         # ← FIXED: Use this stable version (avoids tooltip param rename issues)
+
+  # Optional / future features
   connectivity_plus: ^7.0.0
   permission_handler: ^12.0.1
-  intl: ^0.20.2
-  go_router: ^17.0.1
+  flutter_riverpod: ^3.2.0   # If you're using Riverpod
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.14.1
-  flutter_native_splash: ^2.4.1
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.4.1
 
 flutter:
-  generate: true  # ← add this to enable ARB generation
+  generate: true
   uses-material-design: true
 
-  # Assets declaration (your version is correct)
   assets:
     - assets/icon/
     - assets/splash/
     - assets/data/foods.json
     - assets/avatars/
-fonts:
+
+  fonts:
     - family: NotoNastaliqUrdu
       fonts:
-        - asset: assets/fonts/NotoNastaliqUrdu-Regular.ttf  # Match your file name
+        - asset: assets/fonts/NotoNastaliqUrdu-Regular.ttf
     - family: NotoSansArabic
       fonts:
         - asset: assets/fonts/NotoSansArabic-Regular.ttf
