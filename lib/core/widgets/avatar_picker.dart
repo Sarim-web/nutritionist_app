@@ -67,15 +67,16 @@ class _AvatarPickerState extends State<AvatarPicker> {
           ),
         ),
         const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 16,
+          runSpacing: 8,
           children: [
             OutlinedButton.icon(
               icon: const Icon(Icons.photo_library),
               label: const Text('Gallery'),
               onPressed: _pickFromGallery,
             ),
-            const SizedBox(width: 16),
             OutlinedButton.icon(
               icon: const Icon(Icons.face),
               label: const Text('Choose Icon'),
@@ -85,22 +86,28 @@ class _AvatarPickerState extends State<AvatarPicker> {
                   builder: (ctx) => AlertDialog(
                     title: const Text('Select Avatar'),
                     content: SingleChildScrollView(
-                      child: Wrap(
-                        spacing: 16,
-                        runSpacing: 16,
-                        children: List.generate(16, (i) {
-                          final asset = 'assets/avatars/av$i.png';
-                          return GestureDetector(
-                            onTap: () {
-                              _pickPredefined(asset);
-                              Navigator.pop(ctx);
-                            },
-                            child: CircleAvatar(
-                              radius: 30,
-                              backgroundImage: AssetImage(asset),
-                            ),
-                          );
-                        }),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.8,
+                        ),
+                        child: Wrap(
+                          spacing: 16,
+                          runSpacing: 16,
+                          alignment: WrapAlignment.center,
+                          children: List.generate(16, (i) {
+                            final asset = 'assets/avatars/av$i.png';
+                            return GestureDetector(
+                              onTap: () {
+                                _pickPredefined(asset);
+                                Navigator.pop(ctx);
+                              },
+                              child: CircleAvatar(
+                                radius: 30,
+                                backgroundImage: AssetImage(asset),
+                              ),
+                            );
+                          }),
+                        ),
                       ),
                     ),
                     actions: [

@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Nutritionist';
+  String get appTitle => 'VitaCalo';
 
   @override
   String get logFood => 'Log Food';
@@ -32,9 +32,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String remaining(Object kcal) {
-    return 'Remaining: $kcal kcal';
-  }
+  String get remaining => 'Remaining';
 
   @override
   String get newDayMessage => 'New day started — calories reset to 0';
@@ -68,14 +66,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get manualModeDesc =>
-      'You are tracking calories without a personalized goal.\nLog foods freely — you can take the survey anytime for custom targets.';
+      'You\'re using manual mode. Some features like calorie target are disabled.';
 
   @override
   String get logFoodButton => 'Log Food';
 
   @override
-  String get switchToPersonalized =>
-      'Switch to Personalized Mode (Take Survey)';
+  String get switchToPersonalized => 'Switch to Personalized Mode';
 
   @override
   String get dailyProgress => 'Daily Progress';
@@ -93,19 +90,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editProfile => 'Edit Profile';
 
   @override
-  String get startFresh => 'Start Fresh (Clear Profile)';
+  String get startFresh => 'Start Fresh';
 
   @override
   String get personalizeJourney => 'Personalize your journey';
 
   @override
-  String get takeSurvey => 'Take Profile Survey';
+  String get takeSurvey => 'Take Survey';
 
   @override
   String get continueManual => 'Continue in Manual Mode';
 
   @override
   String get foodAdded => 'Food added!';
+
+  @override
+  String get entryDeleted => 'Entry deleted';
 
   @override
   String get all => 'All';
@@ -171,13 +171,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get required => 'Required';
 
   @override
-  String get positiveNumber => 'Positive number';
+  String get positiveNumber => 'Must be a positive number';
 
   @override
-  String get positive => 'Positive';
-
-  @override
-  String get entryDeleted => 'Entry deleted';
+  String get positive => 'Must be positive';
 
   @override
   String get unknown => 'Unknown';
@@ -204,23 +201,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dietaryPreference => 'Dietary Preference';
 
   @override
-  String get restrictions => 'Restrictions';
+  String get restrictions => 'Restrictions / Allergies';
 
   @override
   String get clearProfileTitle => 'Clear Profile?';
 
   @override
   String get clearProfileDesc =>
-      'This will remove all saved profile info and calorie logs. You can take the survey again for a fresh start.';
-
-  @override
-  String get cancel => 'Cancel';
+      'This will remove all your personal data and reset to manual mode.';
 
   @override
   String get clear => 'Clear';
 
   @override
-  String get profileCleared => 'Profile and logs cleared';
+  String get profileCleared => 'Profile cleared successfully';
 
   @override
   String ofTarget(Object kcal) {
@@ -231,13 +225,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get kcalDay => 'kcal/day';
 
   @override
-  String get takeSurveyDesc =>
-      'Complete the quick profile to get a custom calorie goal and better recommendations.';
-
-  @override
   String dailyTargetLabel(Object kcal) {
     return 'of $kcal kcal';
   }
+
+  @override
+  String get takeSurveyDesc =>
+      'Please complete your profile survey to get personalized insights.';
 
   @override
   String get age => 'Age';
@@ -264,8 +258,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get activityLevel => 'Activity Level';
 
   @override
-  String get restrictionsLabel =>
-      'Allergies, intolerances or medical conditions?';
+  String get restrictionsLabel => 'Restrictions / Allergies';
 
   @override
   String get restrictionsHelper =>
@@ -306,7 +299,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get update => 'Update';
 
   @override
-  String get profileSaved => 'Profile saved successfully';
+  String get profileSaved => 'Profile updated';
 
   @override
   String get basicInfo => 'Basic Info';
@@ -322,4 +315,197 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get next => 'Next';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get on => 'On';
+
+  @override
+  String get off => 'Off';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get currentLanguage => 'Current Language';
+
+  @override
+  String get reminders => 'Reminders';
+
+  @override
+  String get dailyReminderDesc => 'Get daily calorie reminders';
+
+  @override
+  String get exportData => 'Export Data';
+
+  @override
+  String get backupYourData => 'Backup your logs and progress';
+
+  @override
+  String get importData => 'Import Data';
+
+  @override
+  String get restoreYourData => 'Restore your data from backup';
+
+  @override
+  String get aboutApp => 'About App';
+
+  @override
+  String get aboutDesc =>
+      'Offline calorie tracker with local foods and privacy focus';
+
+  @override
+  String get manageProfiles => 'Manage Profiles';
+
+  @override
+  String get switchProfile => 'Switch Profile';
+
+  @override
+  String get noProfilesYet => 'No profiles yet';
+
+  @override
+  String get createNewProfile => 'Create New Profile';
+
+  @override
+  String get profileName => 'Profile Name';
+
+  @override
+  String get profileNameHint => 'e.g. Family Member 1';
+
+  @override
+  String get create => 'Create';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get switchedTo => 'Switched to';
+
+  @override
+  String get createdProfile => 'Created profile';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get deleteProfile => 'Delete Profile';
+
+  @override
+  String get deleteProfileDesc =>
+      'This will permanently delete all data for this profile. This action cannot be undone.';
+
+  @override
+  String get profileDeleted => 'Profile deleted';
+
+  @override
+  String get selectLanguage => 'Select Language';
+
+  @override
+  String get selectWeightUnit => 'Select Weight Unit';
+
+  @override
+  String get selectHeightUnit => 'Select Height Unit';
+
+  @override
+  String get weightUnit => 'Weight Unit';
+
+  @override
+  String get heightUnit => 'Height Unit';
+
+  @override
+  String get comingSoon => 'Coming soon';
+
+  @override
+  String get rateUs => 'Rate Us';
+
+  @override
+  String get rateUsComingSoon => 'Rate Us feature coming soon!';
+
+  @override
+  String get joinBeta => 'Join Beta Testing';
+
+  @override
+  String get betaComingSoon => 'Beta Testing program coming soon!';
+
+  @override
+  String get todayCalories => 'Today\'s Calories';
+
+  @override
+  String get manualEntry => 'Manual Entry';
+
+  @override
+  String get failedToCreateProfile => 'Failed to create profile';
+
+  @override
+  String get failedToDeleteProfile => 'Failed to delete profile';
+
+  @override
+  String get foodLogged => 'Food logged successfully';
+
+  @override
+  String get historyAndProgress => 'History & Progress';
+
+  @override
+  String get height => 'Height';
+
+  @override
+  String get currentWeight => 'Current Weight';
+
+  @override
+  String get checkingConnection => 'Checking connection...';
+
+  @override
+  String get noInternetConnection => 'No Internet Connection';
+
+  @override
+  String get pleaseConnectToInternet =>
+      'Please connect to the internet to continue';
+
+  @override
+  String get tryAgain => 'Try Again';
+
+  @override
+  String get trackNutrition => 'Track Your Nutrition';
+
+  @override
+  String get trackNutritionDesc =>
+      'Easily log meals and monitor calories with region-specific foods';
+
+  @override
+  String get trackProgress => 'Track Your Progress';
+
+  @override
+  String get trackProgressDesc =>
+      'View charts and history of your daily calorie intake and goals';
+
+  @override
+  String get personalizedProfile => 'Personalized Profile';
+
+  @override
+  String get personalizedProfileDesc =>
+      'Create multiple profiles for family members with customized recommendations';
+
+  @override
+  String get getStarted => 'Get Started';
+
+  @override
+  String get profileSwitchedTitle => 'Profile Switched';
+
+  @override
+  String get profileSwitchedDesc =>
+      'The app needs to restart to fully apply the new profile. Restart now?';
+
+  @override
+  String get later => 'Later';
+
+  @override
+  String get restartNow => 'Restart Now';
 }

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../l10n/app_localizations.dart';
+import '../../../../../core/providers/profile_provider.dart';
+import '../../../../../core/widgets/animated_button.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -20,288 +23,455 @@ class DashboardScreen extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: ValueListenableBuilder<Box>(
-            valueListenable: Hive.box('surveyBox').listenable(),
-            builder: (context, box, _) {
-              final bool surveyCompleted =
-                  box.get('completed', defaultValue: false);
-              final bool manualMode =
-                  box.get('manual_mode', defaultValue: false);
+          child: Consumer<ProfileProvider>(
+            builder: (context, profileProvider, _) {
+              // FIXED: Listen to settings box for profile ID changes
+              return ValueListenableBuilder<Box>(
+                valueListenable: Hive.box('settings')
+                    .listenable(keys: ['current_profile_id']),
+                builder: (context, settingsBox, _) {
+                  // Re-read current profile ID fresh
+                  final currentId = settingsBox.get('current_profile_id',
+                      defaultValue: 'main');
 
-              if (surveyCompleted) {
-                final int age = box.get('age', defaultValue: 30);
-                final String gender = box.get('gender', defaultValue: 'Other');
-                final double heightCm =
-                    box.get('heightCm', defaultValue: 170.0);
-                final double weightKg = box.get('weightKg', defaultValue: 70.0);
-                final double? targetWeightKg = box.get('targetWeightKg');
-                final String goal =
-                    box.get('goal', defaultValue: 'Maintain weight');
-                final String activity =
-                    box.get('activityLevel', defaultValue: 'Sedentary');
-                final String dietaryPref = box.get('dietaryPreference',
-                    defaultValue: 'None / No preference');
-                final String? restrictions = box.get('restrictions');
+                  // Ensure provider is in sync (should be handled in main.dart, but double-check)
+                  if (profileProvider.currentProfileId != currentId) {
+                    profileProvider.switchProfile(currentId);
+                  }
 
-                final double bmr = _calculateBMR(
-                  gender: gender,
-                  age: age,
-                  weightKg: weightKg,
-                  heightCm: heightCm,
-                );
+                  final surveyBox = profileProvider.surveyBox;
+                  final foodLogsBox = profileProvider.foodLogsBox;
+                  final valueListenable = surveyBox.listenable();
 
-                final double dailyTarget = _applyActivityAndGoalMultiplier(
-                  bmr: bmr,
-                  activityLevel: activity,
-                  goal: goal,
-                );
+                  return ValueListenableBuilder<Box>(
+                    valueListenable: valueListenable,
+                    builder: (context, box, _) {
+                      final bool surveyCompleted =
+                          box.get('completed', defaultValue: false);
+                      final bool manualMode =
+                          box.get('manual_mode', defaultValue: false);
 
-                final double loggedToday = _getTodayLoggedCalories();
+                      final bool hasSurveyData =
+                          box.isNotEmpty && surveyCompleted == true;
+                      if (!hasSurveyData) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(l10n.takeSurveyDesc)),
+                          );
+                          context.go('/survey');
+                        });
 
-                final double progress =
-                    (loggedToday / dailyTarget).clamp(0.0, 1.5);
-                final Color progressColor = progress < 0.8
-                    ? Colors.green
-                    : progress < 1.0
-                        ? Colors.orange
-                        : Colors.red;
+                        return Center(child: const CircularProgressIndicator());
+                      }
 
-                final String progressMessage = progress < 0.8
-                    ? l10n.goodPace
-                    : progress < 1.0
-                        ? l10n.almostThere
-                        : l10n.overTarget;
+                      if (surveyCompleted) {
+                        final int age = box.get('age', defaultValue: 30);
+                        final String gender =
+                            box.get('gender', defaultValue: 'Other');
+                        final double heightCm =
+                            box.get('heightCm', defaultValue: 170.0);
+                        final double weightKg =
+                            box.get('weightKg', defaultValue: 70.0);
+                        final double? targetWeightKg =
+                            box.get('targetWeightKg');
+                        final String goal =
+                            box.get('goal', defaultValue: 'Maintain weight');
+                        final String activity =
+                            box.get('activityLevel', defaultValue: 'Sedentary');
+                        final String dietaryPref = box.get('dietaryPreference',
+                            defaultValue: 'None / No preference');
+                        final String? restrictions = box.get('restrictions');
 
-                return SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        l10n.dailyProgress,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      const SizedBox(height: 24),
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SizedBox(
-                            width: 180,
-                            height: 180,
-                            child: CircularProgressIndicator(
-                              value: progress.clamp(0.0, 1.0),
-                              strokeWidth: 12,
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer
-                                  .withValues(alpha: 0.3),
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(progressColor),
-                            ),
-                          ),
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
+                        final double bmr = _calculateBMR(
+                          gender: gender,
+                          age: age,
+                          weightKg: weightKg,
+                          heightCm: heightCm,
+                        );
+
+                        final double dailyTarget =
+                            _applyActivityAndGoalMultiplier(
+                          bmr: bmr,
+                          activityLevel: activity,
+                          goal: goal,
+                        );
+
+                        final double loggedToday =
+                            _getTodayLoggedCalories(foodLogsBox);
+
+                        final double progress =
+                            (loggedToday / dailyTarget).clamp(0.0, 1.5);
+                        final Color progressColor = progress < 0.8
+                            ? Colors.green
+                            : progress < 1.0
+                                ? Colors.orange
+                                : Colors.red;
+
+                        final String progressMessage = progress < 0.8
+                            ? l10n.goodPace
+                            : progress < 1.0
+                                ? l10n.almostThere
+                                : l10n.overTarget;
+
+                        // Show periodic backup reminder (once every 3 days)
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          final settingsBox = Hive.box('settings');
+                          final lastBackupReminder = settingsBox
+                              .get('last_backup_reminder', defaultValue: 0);
+                          final now = DateTime.now().millisecondsSinceEpoch;
+                          const reminderIntervalMs =
+                              3 * 24 * 60 * 60 * 1000; // 3 days
+
+                          if (now - lastBackupReminder > reminderIntervalMs) {
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text(
+                                  'Tip: Export your data regularly to backup your nutrition logs',
+                                ),
+                                action: SnackBarAction(
+                                  label: 'Learn More',
+                                  onPressed: () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Data export feature coming soon!',
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                duration: const Duration(seconds: 5),
+                              ),
+                            );
+                            settingsBox.put('last_backup_reminder', now);
+                          }
+                        });
+
+                        return SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                loggedToday.toStringAsFixed(0),
+                                l10n.dailyProgress,
                                 style: Theme.of(context)
                                     .textTheme
-                                    .displayMedium
+                                    .headlineMedium
                                     ?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: progressColor,
                                     ),
                               ),
+                              const SizedBox(height: 24),
+                              Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 180,
+                                    height: 180,
+                                    child: CircularProgressIndicator(
+                                      value: progress.clamp(0.0, 1.0),
+                                      strokeWidth: 12,
+                                      backgroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer
+                                          .withValues(alpha: 0.3),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          progressColor),
+                                    ),
+                                  ),
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        loggedToday.toStringAsFixed(0),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displayMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: progressColor,
+                                            ),
+                                      ),
+                                      Text(
+                                        l10n.ofTarget(
+                                            dailyTarget.toStringAsFixed(0)),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
                               Text(
-                                l10n.ofTarget(dailyTarget.toStringAsFixed(0)),
-                                style: Theme.of(context).textTheme.titleMedium,
+                                progressMessage,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(color: progressColor),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 32),
+                              Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _ProfileRow(
+                                          label: l10n.target,
+                                          value:
+                                              '${dailyTarget.toStringAsFixed(0)} ${l10n.kcalDay}'),
+                                      _ProfileRow(
+                                          label: l10n.goal, value: goal),
+                                      _ProfileRow(
+                                          label: l10n.activity,
+                                          value: activity),
+                                      if (targetWeightKg != null)
+                                        _ProfileRow(
+                                            label: l10n.targetWeight,
+                                            value:
+                                                '${targetWeightKg.toStringAsFixed(1)} kg'),
+                                      _ProfileRow(
+                                          label: l10n.dietaryPreference,
+                                          value: dietaryPref),
+                                      if (restrictions != null &&
+                                          restrictions.isNotEmpty)
+                                        _ProfileRow(
+                                            label: l10n.restrictions,
+                                            value: restrictions),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 32),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  AnimatedFilledButton(
+                                    icon: const Icon(Icons.edit_outlined),
+                                    label: Text(l10n.editProfile),
+                                    onPressed: () => context.go('/survey'),
+                                  ),
+                                  AnimatedElevatedButton(
+                                    onPressed: () => context.go('/log-food'),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.add),
+                                        const SizedBox(width: 8),
+                                        Text(l10n.logFoodButton),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  OutlinedButton.icon(
+                                    icon: const Icon(
+                                        Icons.restaurant_menu_outlined),
+                                    label: const Text('Diet Builder'),
+                                    onPressed: () =>
+                                        context.go('/diet-builder'),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 24),
+                              OutlinedButton.icon(
+                                icon: const Icon(Icons.delete_outline,
+                                    color: Colors.red),
+                                label: Text(l10n.startFresh,
+                                    style: const TextStyle(color: Colors.red)),
+                                style: OutlinedButton.styleFrom(
+                                    side: const BorderSide(color: Colors.red)),
+                                onPressed: () async {
+                                  final confirm = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text(l10n.clearProfileTitle),
+                                      content: Text(l10n.clearProfileDesc),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, false),
+                                          child: Text(l10n.cancel),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, true),
+                                          child: Text(
+                                            l10n.clear,
+                                            style: const TextStyle(
+                                                color: Colors.red),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+
+                                  if (confirm == true && context.mounted) {
+                                    await box.clear();
+                                    await foodLogsBox.clear();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(l10n.profileCleared)),
+                                    );
+                                  }
+                                },
+                              ),
+                              const SizedBox(height: 24),
+
+                              // Backup Reminder Card
+                              Card(
+                                color: Colors.blue[50],
+                                elevation: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(Icons.backup,
+                                              color: Colors.blue[700]),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Text(
+                                              'Export Your Data',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Regularly export your nutrition data to keep it safe and backed up.',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall,
+                                      ),
+                                      const SizedBox(height: 12),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: OutlinedButton.icon(
+                                          icon: const Icon(Icons.download),
+                                          label: const Text('Export Data'),
+                                          onPressed: () {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                    'Data export feature coming soon!'),
+                                                duration: Duration(seconds: 2),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        progressMessage,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(color: progressColor),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 32),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _ProfileRow(
-                                  label: l10n.target,
-                                  value:
-                                      '${dailyTarget.toStringAsFixed(0)} ${l10n.kcalDay}'),
-                              _ProfileRow(label: l10n.goal, value: goal),
-                              _ProfileRow(
-                                  label: l10n.activity, value: activity),
-                              if (targetWeightKg != null)
-                                _ProfileRow(
-                                    label: l10n.targetWeight,
-                                    value:
-                                        '${targetWeightKg.toStringAsFixed(1)} kg'),
-                              _ProfileRow(
-                                  label: l10n.dietaryPreference,
-                                  value: dietaryPref),
-                              if (restrictions != null &&
-                                  restrictions.isNotEmpty)
-                                _ProfileRow(
-                                    label: l10n.restrictions,
-                                    value: restrictions),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          FilledButton.icon(
-                            icon: const Icon(Icons.edit_outlined),
-                            label: Text(l10n.editProfile),
-                            onPressed: () => context.go('/survey'),
-                          ),
-                          OutlinedButton.icon(
-                            icon: const Icon(Icons.add),
-                            label: Text(l10n.logFoodButton),
-                            onPressed: () => context.go('/log-food'),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      OutlinedButton.icon(
-                        icon:
-                            const Icon(Icons.delete_outline, color: Colors.red),
-                        label: Text(l10n.startFresh,
-                            style: const TextStyle(color: Colors.red)),
-                        style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Colors.red)),
-                        onPressed: () async {
-                          final confirm = await showDialog<bool>(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text(l10n.clearProfileTitle),
-                              content: Text(l10n.clearProfileDesc),
-                              actions: [
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, false),
-                                  child: Text(l10n.cancel),
+                        );
+                      } else if (manualMode) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(32.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.handyman,
+                                    size: 80, color: Colors.blue),
+                                const SizedBox(height: 24),
+                                Text(
+                                  l10n.manualModeActive,
+                                  style:
+                                      Theme.of(context).textTheme.headlineSmall,
                                 ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  l10n.manualModeDesc,
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 40),
+                                AnimatedFilledButton(
+                                  icon: const Icon(Icons.add),
+                                  label: Text(l10n.logFoodButton),
+                                  onPressed: () => context.go('/log-food'),
+                                ),
+                                const SizedBox(height: 16),
                                 TextButton(
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: Text(
-                                    l10n.clear,
-                                    style: const TextStyle(color: Colors.red),
-                                  ),
+                                  onPressed: () async {
+                                    await box.delete('manual_mode');
+                                    if (context.mounted) context.go('/survey');
+                                  },
+                                  child: Text(l10n.switchToPersonalized),
                                 ),
                               ],
                             ),
-                          );
-
-                          if (confirm == true && context.mounted) {
-                            await box.clear();
-                            await Hive.box('foodLogs').clear();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(l10n.profileCleared)),
-                            );
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              } else if (manualMode) {
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.handyman,
-                            size: 80, color: Colors.blue),
-                        const SizedBox(height: 24),
-                        Text(
-                          l10n.manualModeActive,
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          l10n.manualModeDesc,
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 40),
-                        FilledButton.icon(
-                          icon: const Icon(Icons.add),
-                          label: Text(l10n.logFoodButton),
-                          onPressed: () => context.go('/log-food'),
-                        ),
-                        const SizedBox(height: 16),
-                        TextButton(
-                          onPressed: () async {
-                            await box.delete('manual_mode');
-                            if (context.mounted) context.go('/survey');
-                          },
-                          child: Text(l10n.switchToPersonalized),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              } else {
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.info_outline_rounded,
-                          size: 80,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(height: 24),
-                        Text(
-                          l10n.personalizeJourney,
-                          style: Theme.of(context).textTheme.headlineSmall,
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          l10n.takeSurveyDesc,
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 40),
-                        FilledButton.icon(
-                          icon: const Icon(Icons.assessment_outlined),
-                          label: Text(l10n.takeSurvey),
-                          onPressed: () => context.go('/survey'),
-                        ),
-                        const SizedBox(height: 16),
-                        OutlinedButton(
-                          onPressed: () async {
-                            await box.put('manual_mode', true);
-                            if (context.mounted) context.go('/log-food');
-                          },
-                          child: Text(l10n.continueManual),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }
+                          ),
+                        );
+                      } else {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(32.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.info_outline_rounded,
+                                  size: 80,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                const SizedBox(height: 24),
+                                Text(
+                                  l10n.personalizeJourney,
+                                  style:
+                                      Theme.of(context).textTheme.headlineSmall,
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  l10n.takeSurveyDesc,
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 40),
+                                AnimatedFilledButton(
+                                  icon: const Icon(Icons.assessment_outlined),
+                                  label: Text(l10n.takeSurvey),
+                                  onPressed: () => context.go('/survey'),
+                                ),
+                                const SizedBox(height: 16),
+                                OutlinedButton(
+                                  onPressed: () async {
+                                    await box.put('manual_mode', true);
+                                    if (context.mounted) {
+                                      context.go('/log-food');
+                                    }
+                                  },
+                                  child: Text(l10n.continueManual),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  );
+                },
+              );
             },
           ),
         ),
@@ -309,12 +479,11 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  double _getTodayLoggedCalories() {
+  double _getTodayLoggedCalories(Box foodLogsBox) {
     final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    final box = Hive.box('foodLogs');
     double total = 0.0;
 
-    for (var entry in box.values) {
+    for (var entry in foodLogsBox.values) {
       if (entry is Map && entry['date'] == today) {
         final cal = (entry['calories'] as num? ?? 0.0) *
             (entry['quantity'] as num? ?? 1.0);

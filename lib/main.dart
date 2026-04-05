@@ -1,24 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:go_router/go_router.dart';
+import 'package:nutritrack/features/welcome/presentation/welcome_screen.dart';
+import 'package:provider/provider.dart';
 
 import 'l10n/app_localizations.dart';
+import 'core/theme/app_theme.dart';
+import 'core/providers/profile_provider.dart';
 
-import 'core/widgets/scaffold_with_nav_bar.dart'; // ← new import
-
-import 'features/dashboard/presentation/dashboard_screen.dart';
-import 'features/survey/presentation/survey_screen.dart';
-import 'features/calorie_logging/presentation/food_logging_screen.dart';
-import 'features/history/presentation/history_screen.dart'; // ← new
-import 'features/profile/presentation/profile_screen.dart'; // ← new
-import 'features/welcome/presentation/welcome_screen.dart';
+import 'routes/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+
+  // Open global boxes
+  await Hive.openBox('profiles');
+  await Hive.openBox('settings');
+
+  // Get current profile ID
+  final settings = Hive.box('settings');
+  final currentProfileId =
+      settings.get('current_profile_id', defaultValue: 'main');
+
+  // Open profile-specific boxes
+  await Hive.openBox('survey_$currentProfileId');
+  await Hive.openBox('foodLogs_$currentProfileId');
+
+  // Legacy boxes
   await Hive.openBox('surveyBox');
   await Hive.openBox('foodLogs');
+
   runApp(const MyApp());
 }
 
@@ -27,119 +39,76 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<Box>(
-      valueListenable: Hive.box('surveyBox').listenable(),
-      builder: (context, box, _) {
-        String languageCode = box.get('language_code', defaultValue: 'en');
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
+      ],
+      child: Consumer2<ThemeProvider, ProfileProvider>(
+        builder: (context, themeProvider, profileProvider, child) {
+          return ValueListenableBuilder<Box>(
+            valueListenable: Hive.box('settings').listenable(),
+            builder: (context, settingsBox, _) {
+              final languageCode =
+                  settingsBox.get('language_code') as String? ?? 'en';
+              final locale = Locale(languageCode);
 
-        // Backward compatibility for old saves
-        if (languageCode == 'English') languageCode = 'en';
-        if (languageCode == 'Urdu') languageCode = 'ur';
+              // If no language set at all → force welcome
+              if (languageCode == 'en' &&
+                  settingsBox.get('language_code') == null) {
+                return MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  home: const WelcomeScreen(),
+                  locale: const Locale('en'),
+                  localizationsDelegates: const [
+                    AppLocalizations.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  supportedLocales: AppLocalizations.supportedLocales,
+                );
+              }
 
-        final Locale locale = Locale(languageCode);
+              // FIXED: Listen to current_profile_id changes and force provider refresh
+              final currentId =
+                  settingsBox.get('current_profile_id', defaultValue: 'main');
+              if (profileProvider.currentProfileId != currentId) {
+                profileProvider
+                    .switchProfile(currentId); // Triggers notifyListeners()
+              }
 
-        print('Loaded language: $languageCode → $locale');
+              // Normal app with dynamic locale from settings
+              return MaterialApp.router(
+                locale: locale,
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: AppLocalizations.supportedLocales,
+                builder: (context, child) {
+                  final loc = Localizations.localeOf(context);
+                  final isRtl = loc.languageCode == 'ur' ||
+                      loc.languageCode == 'ar' ||
+                      loc.languageCode == 'pa';
 
-        return MaterialApp.router(
-          locale: locale,
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: AppLocalizations.supportedLocales,
-          localeResolutionCallback: (deviceLocale, supported) {
-            return supported.firstWhere(
-              (l) => l.languageCode == languageCode,
-              orElse: () => const Locale('en'),
-            );
-          },
-          builder: (context, child) {
-            final loc = Localizations.localeOf(context);
-            final isRtl = loc.languageCode == 'ur' ||
-                loc.languageCode == 'ar' ||
-                loc.languageCode == 'pa';
-
-            return Directionality(
-              textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-              child: child!,
-            );
-          },
-          debugShowCheckedModeBanner: false,
-          routerConfig: _router,
-          title: 'Nutritionist',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-            useMaterial3: true,
-            textTheme: Theme.of(context).textTheme.apply(
-                  fontFamily: _getFontFamily(languageCode),
-                ),
-          ),
-        );
-      },
+                  return Directionality(
+                    textDirection:
+                        isRtl ? TextDirection.rtl : TextDirection.ltr,
+                    child: child!,
+                  );
+                },
+                debugShowCheckedModeBanner: false,
+                routerConfig: router,
+                title: 'VitaCalo',
+                theme: themeProvider.currentTheme,
+              );
+            },
+          );
+        },
+      ),
     );
   }
-
-  String? _getFontFamily(String code) {
-    switch (code) {
-      case 'ur':
-      case 'pa':
-        return 'NotoNastaliqUrdu';
-      case 'ar':
-        return 'NotoSansArabic';
-      case 'hi':
-      case 'pa': // fallback if separate font added later
-        return 'NotoSansDevanagari';
-      default:
-        return null;
-    }
-  }
-
-  GoRouter get _router => GoRouter(
-        initialLocation: '/',
-        redirect: (context, state) {
-          final box = Hive.box('surveyBox');
-          final String? langCode = box.get('language_code');
-          if (langCode == null && state.uri.toString() != '/welcome') {
-            return '/welcome';
-          }
-          return null;
-        },
-        routes: [
-          // Welcome & Survey are outside shell (no bottom nav)
-          GoRoute(
-            path: '/welcome',
-            builder: (context, state) => const WelcomeScreen(),
-          ),
-          GoRoute(
-            path: '/survey',
-            builder: (context, state) => const SurveyScreen(),
-          ),
-
-          // Shell with bottom nav for main app
-          ShellRoute(
-            builder: (context, state, child) =>
-                ScaffoldWithNavBar(child: child),
-            routes: [
-              GoRoute(
-                path: '/',
-                builder: (context, state) => const DashboardScreen(),
-              ),
-              GoRoute(
-                path: '/log-food',
-                builder: (context, state) => const FoodLoggingScreen(),
-              ),
-              GoRoute(
-                path: '/history',
-                builder: (context, state) => const HistoryScreen(),
-              ),
-              GoRoute(
-                path: '/profile',
-                builder: (context, state) => const ProfileScreen(),
-              ),
-            ],
-          ),
-        ],
-      );
 }

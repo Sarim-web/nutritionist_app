@@ -6,6 +6,7 @@ plugins {
 }
 
 android {
+    // Make sure the namespace matches the package declaration in Kotlin files
     namespace = "com.example.nutritionist_app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
@@ -28,6 +29,10 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Ensure the manifest placeholder for applicationName is set
+        // Flutter templates use this to point to the default Flutter application class.
+        manifestPlaceholders["applicationName"] = "io.flutter.app.FlutterApplication"
     }
 
     buildTypes {

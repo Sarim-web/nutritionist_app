@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -16,7 +17,6 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final Box _foodLogsBox = Hive.box('foodLogs');
 
   @override
   void initState() {
@@ -36,7 +36,14 @@ class _HistoryScreenState extends State<HistoryScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('History & Progress'),
+        title: Text(l10n.historyAndProgress),
+        leading: BackButton(
+          onPressed: () {
+            if (context.mounted) {
+              context.go('/');
+            }
+          },
+        ),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -61,8 +68,40 @@ class _HistoryScreenState extends State<HistoryScreen>
         ? now.subtract(const Duration(days: 7))
         : now.subtract(const Duration(days: 30));
 
-    final surveyBox = Hive.box('surveyBox');
+    final settingsBox = Hive.box('settings');
+    final currentId =
+        settingsBox.get('current_profile_id', defaultValue: 'main');
+    final surveyBox = Hive.box('survey_$currentId');
+    final foodLogsBox = Hive.box('foodLogs_$currentId');
+
+    // Redirect if no survey data for this profile
     final bool completed = surveyBox.get('completed', defaultValue: false);
+    if (!completed) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.takeSurveyDesc)),
+          );
+          context.go('/survey');
+        }
+      });
+
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(l10n.takeSurveyDesc,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium),
+            ],
+          ),
+        ),
+      );
+    }
 
     double target = 2000.0;
     if (completed) {
@@ -79,28 +118,32 @@ class _HistoryScreenState extends State<HistoryScreen>
 
     final Map<String, double> dailyCalories = {};
 
-    for (var entry in _foodLogsBox.values) {
+    for (var entry in foodLogsBox.values) {
       if (entry is Map &&
           entry.containsKey('date') &&
           entry.containsKey('calories')) {
-        final dateStr = entry['date'] as String;
-        final logDate = DateFormat('yyyy-MM-dd').parse(dateStr);
+        final String dateStr = entry['date'] as String;
+        final DateTime logDate = DateFormat('yyyy-MM-dd').parse(dateStr);
         if (!logDate.isBefore(startDate)) {
-          final cal = ((entry['calories'] as num?)?.toDouble() ?? 0.0) *
+          final double cal = ((entry['calories'] as num?)?.toDouble() ?? 0.0) *
               ((entry['quantity'] as num?)?.toDouble() ?? 1.0);
-          dailyCalories.update(dateStr, (v) => v + cal, ifAbsent: () => cal);
+          dailyCalories.update(
+            dateStr,
+            (value) => value + cal,
+            ifAbsent: () => cal,
+          );
         }
       }
     }
 
-    final dates = <String>[];
-    final calories = <double>[];
-    final pointColors = <Color>[];
+    final List<String> dates = [];
+    final List<double> calories = [];
+    final List<Color> pointColors = [];
 
     DateTime current = startDate;
     while (!current.isAfter(now)) {
-      final key = DateFormat('yyyy-MM-dd').format(current);
-      final cal = dailyCalories[key] ?? 0.0;
+      final String dateKey = DateFormat('yyyy-MM-dd').format(current);
+      final double cal = dailyCalories[dateKey] ?? 0.0;
       dates.add(DateFormat('MMM d').format(current));
       calories.add(cal);
 
@@ -111,17 +154,47 @@ class _HistoryScreenState extends State<HistoryScreen>
       } else {
         pointColors.add(Colors.orange);
       }
+
       current = current.add(const Duration(days: 1));
     }
 
-    final avgDaily = calories.isEmpty
-        ? 0
-        : calories.reduce((a, b) => a + b) / calories.length;
-    final totalActual = calories.fold(0.0, (sum, cal) => sum + cal);
-    final totalTarget = target * dates.length;
+    if (calories.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.no_food, size: 80, color: Colors.grey[400]),
+              const SizedBox(height: 24),
+              Text(
+                'No data for this period yet',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Colors.grey[600],
+                    ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Log some meals to see your progress!',
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final double avgDaily = calories.reduce((a, b) => a + b) / calories.length;
+    final double totalActual = calories.reduce((a, b) => a + b);
+    final double totalTarget = target * dates.length;
+
+    final String summaryTitle =
+        period == 'week' ? 'Weekly Average' : 'Monthly Average';
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -130,15 +203,15 @@ class _HistoryScreenState extends State<HistoryScreen>
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _SummaryCard(
-                title: 'Avg Daily',
+                title: summaryTitle,
                 value: '${avgDaily.toStringAsFixed(0)} kcal',
-                icon: Icons.trending_flat,
+                icon: Icons.trending_up,
                 color: avgDaily > target
                     ? Colors.red
                     : (avgDaily < target ? Colors.green : Colors.orange),
               ),
               _SummaryCard(
-                title: 'Target',
+                title: 'Target / Day',
                 value: '${target.toStringAsFixed(0)} kcal',
                 icon: Icons.track_changes,
                 color: Colors.blue,

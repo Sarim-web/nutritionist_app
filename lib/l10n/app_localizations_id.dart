@@ -9,7 +9,7 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
-  String get appTitle => 'Ahli Gizi';
+  String get appTitle => 'VitaCalo';
 
   @override
   String get logFood => 'Catat Makanan';
@@ -32,9 +32,7 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String remaining(Object kcal) {
-    return 'Sisa: $kcal kkal';
-  }
+  String get remaining => 'Tersisa';
 
   @override
   String get newDayMessage => 'Hari baru dimulai — kalori direset ke 0';
@@ -109,6 +107,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get foodAdded => 'Makanan ditambahkan!';
 
   @override
+  String get entryDeleted => 'Entri dihapus';
+
+  @override
   String get all => 'Semua';
 
   @override
@@ -172,13 +173,10 @@ class AppLocalizationsId extends AppLocalizations {
   String get required => 'Wajib';
 
   @override
-  String get positiveNumber => 'Angka positif';
+  String get positiveNumber => 'Harus berupa angka positif';
 
   @override
-  String get positive => 'Positif';
-
-  @override
-  String get entryDeleted => 'Entri dihapus';
+  String get positive => 'Harus positif';
 
   @override
   String get unknown => 'Tidak diketahui';
@@ -215,9 +213,6 @@ class AppLocalizationsId extends AppLocalizations {
       'Ini akan menghapus semua informasi profil dan catatan kalori yang tersimpan. Anda dapat mengisi survei lagi untuk memulai dari awal.';
 
   @override
-  String get cancel => 'Batal';
-
-  @override
   String get clear => 'Hapus';
 
   @override
@@ -232,13 +227,13 @@ class AppLocalizationsId extends AppLocalizations {
   String get kcalDay => 'kkal/hari';
 
   @override
-  String get takeSurveyDesc =>
-      'Lengkapi profil singkat untuk mendapatkan target kalori khusus dan rekomendasi yang lebih baik.';
-
-  @override
   String dailyTargetLabel(Object kcal) {
     return 'dari $kcal kkal';
   }
+
+  @override
+  String get takeSurveyDesc =>
+      'Lengkapi profil singkat untuk mendapatkan target kalori khusus dan rekomendasi yang lebih baik.';
 
   @override
   String get age => 'Usia';
@@ -322,5 +317,198 @@ class AppLocalizationsId extends AppLocalizations {
   String get location => 'Lokasi';
 
   @override
-  String get next => 'Berikutnya';
+  String get next => 'Lanjut';
+
+  @override
+  String get settings => 'Pengaturan';
+
+  @override
+  String get darkMode => 'Mode Gelap';
+
+  @override
+  String get on => 'Aktif';
+
+  @override
+  String get off => 'Nonaktif';
+
+  @override
+  String get language => 'Bahasa';
+
+  @override
+  String get currentLanguage => 'Bahasa Saat Ini';
+
+  @override
+  String get reminders => 'Pengingat';
+
+  @override
+  String get dailyReminderDesc => 'Dapatkan pengingat kalori harian';
+
+  @override
+  String get exportData => 'Ekspor Data';
+
+  @override
+  String get backupYourData => 'Cadangkan log dan progres Anda';
+
+  @override
+  String get importData => 'Impor Data';
+
+  @override
+  String get restoreYourData => 'Pulihkan data dari cadangan';
+
+  @override
+  String get aboutApp => 'Tentang Aplikasi';
+
+  @override
+  String get aboutDesc =>
+      'Pelacak kalori offline dengan makanan lokal dan fokus pada privasi';
+
+  @override
+  String get manageProfiles => 'Kelola Profil';
+
+  @override
+  String get switchProfile => 'Ganti Profil';
+
+  @override
+  String get noProfilesYet => 'Belum ada profil';
+
+  @override
+  String get createNewProfile => 'Buat Profil Baru';
+
+  @override
+  String get profileName => 'Nama Profil';
+
+  @override
+  String get profileNameHint => 'mis. Anggota Keluarga 1';
+
+  @override
+  String get create => 'Buat';
+
+  @override
+  String get cancel => 'Batal';
+
+  @override
+  String get save => 'Simpan';
+
+  @override
+  String get switchedTo => 'Dialihkan ke';
+
+  @override
+  String get createdProfile => 'Profil dibuat';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get deleteProfile => 'Delete Profile';
+
+  @override
+  String get deleteProfileDesc =>
+      'This will permanently delete all data for this profile. This action cannot be undone.';
+
+  @override
+  String get profileDeleted => 'Profile deleted';
+
+  @override
+  String get selectLanguage => 'Select Language';
+
+  @override
+  String get selectWeightUnit => 'Select Weight Unit';
+
+  @override
+  String get selectHeightUnit => 'Select Height Unit';
+
+  @override
+  String get weightUnit => 'Weight Unit';
+
+  @override
+  String get heightUnit => 'Height Unit';
+
+  @override
+  String get comingSoon => 'Segera hadir';
+
+  @override
+  String get rateUs => 'Nilai Kami';
+
+  @override
+  String get rateUsComingSoon => 'Fitur rating akan segera tersedia!';
+
+  @override
+  String get joinBeta => 'Bergabung dengan Pengujian Beta';
+
+  @override
+  String get betaComingSoon => 'Program beta testing akan segera diluncurkan!';
+
+  @override
+  String get todayCalories => 'Kalori Hari Ini';
+
+  @override
+  String get manualEntry => 'Entri Manual';
+
+  @override
+  String get failedToCreateProfile => 'Gagal membuat profil';
+
+  @override
+  String get failedToDeleteProfile => 'Gagal menghapus profil';
+
+  @override
+  String get foodLogged => 'Makanan berhasil dicatat';
+
+  @override
+  String get historyAndProgress => 'History & Progress';
+
+  @override
+  String get height => 'Height';
+
+  @override
+  String get currentWeight => 'Current Weight';
+
+  @override
+  String get checkingConnection => 'Memeriksa koneksi...';
+
+  @override
+  String get noInternetConnection => 'Tidak Ada Koneksi Internet';
+
+  @override
+  String get pleaseConnectToInternet =>
+      'Silakan hubungkan ke internet untuk melanjutkan';
+
+  @override
+  String get tryAgain => 'Coba Lagi';
+
+  @override
+  String get trackNutrition => 'Pantau Nutrisi Anda';
+
+  @override
+  String get trackNutritionDesc =>
+      'Catat makanan dengan mudah dan pantau kalori dengan makanan khas daerah';
+
+  @override
+  String get trackProgress => 'Pantau Progres Anda';
+
+  @override
+  String get trackProgressDesc =>
+      'Lihat grafik ve riwayat asupan kalori harian dan target Anda';
+
+  @override
+  String get personalizedProfile => 'Profil Personalisasi';
+
+  @override
+  String get personalizedProfileDesc =>
+      'Buat beberapa profil untuk anggota keluarga dengan rekomendasi khusus';
+
+  @override
+  String get getStarted => 'Mulai';
+
+  @override
+  String get profileSwitchedTitle => 'Profil Diganti';
+
+  @override
+  String get profileSwitchedDesc =>
+      'Aplikasi perlu dimulai ulang untuk menerapkan profil baru sepenuhnya. Mulai ulang sekarang?';
+
+  @override
+  String get later => 'Nanti';
+
+  @override
+  String get restartNow => 'Mulai Ulang Sekarang';
 }

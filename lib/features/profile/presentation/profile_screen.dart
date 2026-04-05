@@ -1,6 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:go_router/go_router.dart'; // ← FIXED: This import was missing!
+import 'package:go_router/go_router.dart';
 
 import '../../../../../l10n/app_localizations.dart';
 import '../../../../../core/widgets/avatar_picker.dart';
@@ -13,23 +15,15 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String? _avatarPath;
   late Box _surveyBox;
 
   @override
   void initState() {
     super.initState();
-    _surveyBox = Hive.box('surveyBox');
-    _avatarPath = _surveyBox.get('avatar_path');
-  }
-
-  Future<void> _saveAvatar(String? path) async {
-    await _surveyBox.put('avatar_path', path);
-    if (!mounted) return;
-    setState(() => _avatarPath = path);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.profileSaved)),
-    );
+    final settingsBox = Hive.box('settings');
+    final currentId =
+        settingsBox.get('current_profile_id', defaultValue: 'main');
+    _surveyBox = Hive.box('survey_$currentId');
   }
 
   @override
@@ -39,11 +33,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.yourProfile),
+        leading: BackButton(
+          onPressed: () {
+            if (context.mounted) {
+              context.go('/');
+            }
+          },
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: () =>
-                context.go('/survey'), // ← now works with go_router
+            onPressed: () => context.go('/survey'),
             tooltip: 'Edit Profile',
           ),
         ],
@@ -54,8 +54,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           final bool isCompleted = box.get('completed', defaultValue: false);
           final bool isManual = box.get('manual_mode', defaultValue: false);
 
+          // Get avatar path every time the box changes
+          final String? avatarPath = box.get('avatar_path');
+
           if (!isCompleted && !isManual) {
-            // Show onboarding prompt if no survey done
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(32.0),
@@ -75,16 +77,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     FilledButton.icon(
                       icon: const Icon(Icons.assessment),
                       label: Text(l10n.takeSurvey),
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 32, vertical: 16),
+                      ),
                       onPressed: () => context.go('/survey'),
                     ),
                     const SizedBox(height: 16),
-                    OutlinedButton(
+                    OutlinedButton.icon(
+                      icon: const Icon(Icons.skip_next),
+                      label: Text(l10n.continueManual),
                       onPressed: () async {
                         await box.put('manual_mode', true);
-                        if (!mounted) return;
-                        context.go('/log-food');
+                        if (mounted) context.go('/log-food');
                       },
-                      child: Text(l10n.continueManual),
                     ),
                   ],
                 ),
@@ -92,67 +98,95 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           }
 
-          // Profile loaded
-          final int age = box.get('age', defaultValue: 30);
-          final String gender = box.get('gender', defaultValue: 'Other');
-          final double height = box.get('heightCm', defaultValue: 170.0);
-          final double weight = box.get('weightKg', defaultValue: 70.0);
-          final double? targetWeight = box.get('targetWeightKg');
-          final String goal = box.get('goal', defaultValue: 'Maintain weight');
-          final String activity =
-              box.get('activityLevel', defaultValue: 'Sedentary');
-          final String dietary = box.get('dietaryPreference',
-              defaultValue: 'None / No preference');
+          final int age = box.get('age', defaultValue: 0);
+          final String gender = box.get('gender', defaultValue: '');
+          final double heightCm = box.get('heightCm', defaultValue: 0.0);
+          final double weightKg = box.get('weightKg', defaultValue: 0.0);
+          final double? targetWeightKg = box.get('targetWeightKg');
+          final String goal = box.get('goal', defaultValue: '');
+          final String activityLevel =
+              box.get('activityLevel', defaultValue: '');
+          final String dietaryPref =
+              box.get('dietaryPreference', defaultValue: '');
           final String? restrictions = box.get('restrictions');
-          final String region = box.get('region', defaultValue: 'Other');
+          final String region = box.get('region', defaultValue: '');
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Avatar
-                SizedBox(
-                  height: 200,
-                  child: Column(
-                    children: [
-                      AvatarPicker(
-                        initialPath: _avatarPath,
-                        onChanged: _saveAvatar,
+                // Avatar Section - now updates live when box changes
+                Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    CircleAvatar(
+                      radius: 80,
+                      backgroundImage: avatarPath != null
+                          ? (avatarPath.startsWith('assets/')
+                              ? AssetImage(avatarPath)
+                              : FileImage(File(avatarPath)))
+                          : null,
+                      child: avatarPath == null
+                          ? Icon(Icons.person,
+                              size: 80, color: Colors.grey[400])
+                          : null,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: FloatingActionButton.small(
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) => AvatarPicker(
+                              initialPath: avatarPath,
+                              onChanged: (path) async {
+                                await box.put('avatar_path', path);
+                              },
+                            ),
+                          );
+                        },
+                        child: const Icon(Icons.edit),
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        l10n.yourProfile,
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-
+                const SizedBox(height: 24),
+                Text(
+                  l10n.yourProfile,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 32),
 
                 // Basic Info Card
                 Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(20.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l10n.basicInfo ?? 'Basic Info',
+                        Text('Basic Information',
                             style: Theme.of(context).textTheme.titleLarge),
                         const SizedBox(height: 16),
-                        _ProfileRow(label: l10n.age, value: '$age'),
+                        _ProfileRow(label: l10n.age, value: '$age years'),
                         _ProfileRow(label: l10n.gender, value: gender),
                         _ProfileRow(
-                            label: l10n.heightCm,
-                            value: '${height.toStringAsFixed(0)} cm'),
+                            label: l10n.height,
+                            value: '${heightCm.toStringAsFixed(1)} cm'),
                         _ProfileRow(
-                            label: l10n.currentWeightKg,
-                            value: '${weight.toStringAsFixed(1)} kg'),
-                        if (targetWeight != null)
+                            label: l10n.currentWeight,
+                            value: '${weightKg.toStringAsFixed(1)} kg'),
+                        if (targetWeightKg != null)
                           _ProfileRow(
-                              label: l10n.targetWeightKgOptional,
-                              value: '${targetWeight.toStringAsFixed(1)} kg'),
+                              label: l10n.targetWeight,
+                              value: '${targetWeightKg.toStringAsFixed(1)} kg'),
                       ],
                     ),
                   ),
@@ -160,24 +194,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                // Goals Card
+                // Goals & Lifestyle Card
                 Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(20.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l10n.goalsAndLifestyle ?? 'Goals & Lifestyle',
+                        Text('Goals & Lifestyle',
                             style: Theme.of(context).textTheme.titleLarge),
                         const SizedBox(height: 16),
-                        _ProfileRow(label: l10n.mainGoal, value: goal),
-                        _ProfileRow(label: l10n.activityLevel, value: activity),
+                        _ProfileRow(label: l10n.goal, value: goal),
                         _ProfileRow(
-                            label: l10n.dietaryPreference, value: dietary),
+                            label: l10n.activityLevel, value: activityLevel),
+                        _ProfileRow(
+                            label: l10n.dietaryPreference, value: dietaryPref),
                         if (restrictions != null && restrictions.isNotEmpty)
                           _ProfileRow(
-                              label: l10n.restrictionsLabel,
-                              value: restrictions),
+                              label: l10n.restrictions, value: restrictions),
                       ],
                     ),
                   ),
@@ -187,13 +224,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 // Location Card
                 Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(20.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l10n.location ?? 'Location',
+                        Text('Location',
                             style: Theme.of(context).textTheme.titleLarge),
+                        const SizedBox(height: 16),
                         _ProfileRow(label: l10n.regionCountry, value: region),
                       ],
                     ),
@@ -205,22 +246,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // Manual Mode Notice
                 if (isManual)
                   Card(
+                    color: Colors.amber[50],
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(20.0),
                       child: Column(
                         children: [
-                          Text('Manual Mode Active',
-                              style: Theme.of(context).textTheme.titleMedium),
+                          Row(
+                            children: [
+                              Icon(Icons.info, color: Colors.amber[800]),
+                              const SizedBox(width: 12),
+                              Text('Manual Mode Active',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium),
+                            ],
+                          ),
                           const SizedBox(height: 8),
-                          Text(l10n.manualModeDesc),
+                          Text(l10n.manualModeDesc,
+                              textAlign: TextAlign.center),
                           const SizedBox(height: 16),
                           FilledButton.icon(
                             icon: const Icon(Icons.assessment),
                             label: Text(l10n.switchToPersonalized),
                             onPressed: () async {
                               await box.delete('manual_mode');
-                              if (!mounted) return;
-                              context.go('/survey');
+                              if (mounted) context.go('/survey');
                             },
                           ),
                         ],
@@ -228,14 +277,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 40),
 
                 // Clear Profile Button
                 FilledButton.icon(
-                  icon: const Icon(Icons.delete_forever, color: Colors.white),
-                  style: FilledButton.styleFrom(backgroundColor: Colors.red),
-                  label: Text(l10n.startFresh,
-                      style: const TextStyle(color: Colors.white)),
+                  icon: const Icon(Icons.delete_forever),
+                  label: Text(l10n.startFresh),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    minimumSize: const Size.fromHeight(56),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
                   onPressed: _showClearDialog,
                 ),
               ],
@@ -251,20 +304,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Text(l10n.clearProfileTitle),
         content: Text(l10n.clearProfileDesc),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(dialogContext, false),
             child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () async {
-              final box = Hive.box('surveyBox');
-              await box.clear();
-              await box.put('manual_mode', true);
-              if (mounted) Navigator.pop(context, true);
+              await _surveyBox.clear();
+              await _surveyBox.put('manual_mode', true);
+              if (mounted) Navigator.pop(dialogContext, true);
             },
             child: Text(l10n.clear, style: const TextStyle(color: Colors.red)),
           ),
@@ -290,16 +342,16 @@ class _ProfileRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 120,
+            width: 140,
             child: Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
+                    color: Colors.grey[700],
                     fontWeight: FontWeight.w500,
                   ),
             ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
+import '../../../../core/providers/profile_provider.dart';
 
 import '../../../../../l10n/app_localizations.dart';
 
@@ -53,7 +55,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
     'Keto / Low-carb',
     'Paleo',
     'Gluten-free',
-    'Other (specify in restrictions)',
+    'Other',
   ];
   final List<String> _regions = [
     'Pakistan',
@@ -75,12 +77,12 @@ class _SurveyScreenState extends State<SurveyScreen> {
   @override
   void initState() {
     super.initState();
-    _openBoxAndLoadData();
-  }
-
-  Future<void> _openBoxAndLoadData() async {
-    _surveyBox = await Hive.openBox('surveyBox');
-    _loadExistingData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final profileProvider =
+          Provider.of<ProfileProvider>(context, listen: false);
+      _surveyBox = profileProvider.surveyBox;
+      _loadExistingData();
+    });
   }
 
   void _loadExistingData() {
@@ -153,9 +155,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
     }
     if (!isValid) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(AppLocalizations.of(context)!.required ??
-                'Please complete all required fields')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.required)),
       );
       return;
     }
@@ -199,6 +199,13 @@ class _SurveyScreenState extends State<SurveyScreen> {
       appBar: AppBar(
         title: Text(l10n.yourProfile),
         centerTitle: true,
+        leading: BackButton(
+          onPressed: () {
+            if (context.mounted) {
+              context.go('/onboarding');
+            }
+          },
+        ),
       ),
       body: Stepper(
         currentStep: _currentStep,
@@ -212,9 +219,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
             }
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content:
-                      Text(l10n.required ?? 'Please fill required fields')),
+              SnackBar(content: Text(l10n.required)),
             );
           }
         },
@@ -245,7 +250,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
+                  DropdownButtonFormField<String?>(
                     initialValue: _gender,
                     decoration: InputDecoration(labelText: l10n.gender),
                     items: _genders
@@ -291,21 +296,29 @@ class _SurveyScreenState extends State<SurveyScreen> {
               key: _formKeys[1],
               child: Column(
                 children: [
-                  DropdownButtonFormField<String>(
+                  DropdownButtonFormField<String?>(
+                    isExpanded: true,
                     initialValue: _goal,
                     decoration: InputDecoration(labelText: l10n.mainGoal),
                     items: _goals
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                        .map((e) => DropdownMenuItem(
+                              value: e,
+                              child: Text(e, overflow: TextOverflow.ellipsis),
+                            ))
                         .toList(),
                     onChanged: (v) => setState(() => _goal = v),
                     validator: (v) => v == null ? l10n.required : null,
                   ),
                   const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
+                  DropdownButtonFormField<String?>(
+                    isExpanded: true,
                     initialValue: _activityLevel,
                     decoration: InputDecoration(labelText: l10n.activityLevel),
                     items: _activityLevels
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                        .map((e) => DropdownMenuItem(
+                              value: e,
+                              child: Text(e, overflow: TextOverflow.ellipsis),
+                            ))
                         .toList(),
                     onChanged: (v) => setState(() => _activityLevel = v),
                     validator: (v) => v == null ? l10n.required : null,
@@ -339,7 +352,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
               key: _formKeys[2],
               child: Column(
                 children: [
-                  DropdownButtonFormField<String>(
+                  DropdownButtonFormField<String?>(
                     initialValue: _dietaryPreference,
                     decoration:
                         InputDecoration(labelText: l10n.dietaryPreference),
@@ -369,7 +382,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
               key: _formKeys[3],
               child: Column(
                 children: [
-                  DropdownButtonFormField<String>(
+                  DropdownButtonFormField<String?>(
                     initialValue: _selectedRegion,
                     decoration: InputDecoration(
                       labelText: l10n.regionCountry,

@@ -9,7 +9,7 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get appTitle => 'اختصاصي التغذية';
+  String get appTitle => 'VitaCalo';
 
   @override
   String get logFood => 'تسجيل الطعام';
@@ -32,9 +32,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String remaining(Object kcal) {
-    return 'المتبقي: $kcal سعرة حرارية';
-  }
+  String get remaining => 'المتبقي';
 
   @override
   String get newDayMessage => 'بدأ يوم جديد — تمت إعادة تعيين السعرات إلى 0';
@@ -68,14 +66,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get manualModeDesc =>
-      'أنت تتتبع السعرات الحرارية بدون هدف مخصص.\nقم بتسجيل الطعام بحرية — يمكنك إجراء الاستبيان في أي وقت للحصول على أهداف مخصصة.';
+      'أنت تستخدم الوضع اليدوي. بعض الميزات مثل هدف السعرات معطلة.';
 
   @override
   String get logFoodButton => 'تسجيل الطعام';
 
   @override
-  String get switchToPersonalized =>
-      'التحويل إلى الوضع المخصص (إجراء الاستبيان)';
+  String get switchToPersonalized => 'التبديل إلى الوضع المخصص';
 
   @override
   String get dailyProgress => 'التقدم اليومي';
@@ -93,19 +90,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get editProfile => 'تعديل الملف الشخصي';
 
   @override
-  String get startFresh => 'البدء من جديد (مسح الملف الشخصي)';
+  String get startFresh => 'بداية جديدة';
 
   @override
   String get personalizeJourney => 'خصص رحلتك';
 
   @override
-  String get takeSurvey => 'إجراء استبيان الملف الشخصي';
+  String get takeSurvey => 'إجراء الاستبيان';
 
   @override
-  String get continueManual => 'المتابعة في الوضع اليدوي';
+  String get continueManual => 'الاستمرار في الوضع اليدوي';
 
   @override
   String get foodAdded => 'تمت إضافة الطعام!';
+
+  @override
+  String get entryDeleted => 'تم حذف الإدخال';
 
   @override
   String get all => 'الكل';
@@ -171,13 +171,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get required => 'مطلوب';
 
   @override
-  String get positiveNumber => 'رقم موجب';
+  String get positiveNumber => 'يجب أن يكون رقمًا موجبًا';
 
   @override
-  String get positive => 'موجب';
-
-  @override
-  String get entryDeleted => 'تم حذف الإدخال';
+  String get positive => 'يجب أن يكون موجبًا';
 
   @override
   String get unknown => 'غير معروف';
@@ -204,23 +201,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dietaryPreference => 'التفضيل الغذائي';
 
   @override
-  String get restrictions => 'القيود';
+  String get restrictions => 'القيود / الحساسية';
 
   @override
   String get clearProfileTitle => 'مسح الملف الشخصي؟';
 
   @override
   String get clearProfileDesc =>
-      'سيؤدي هذا إلى إزالة جميع معلومات الملف الشخصي المحفوظة وسجلات السعرات الحرارية. يمكنك إجراء الاستبيان مرة أخرى للبدء من جديد.';
-
-  @override
-  String get cancel => 'إلغاء';
+      'سيؤدي هذا إلى حذف جميع البيانات الشخصية وإعادة التعيين إلى الوضع اليدوي.';
 
   @override
   String get clear => 'مسح';
 
   @override
-  String get profileCleared => 'تم مسح الملف الشخصي والسجلات';
+  String get profileCleared => 'تم مسح الملف الشخصي بنجاح';
 
   @override
   String ofTarget(Object kcal) {
@@ -231,13 +225,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get kcalDay => 'سعرة حرارية/اليوم';
 
   @override
-  String get takeSurveyDesc =>
-      'أكمل الاستبيان السريع للحصول على هدف سعرات مخصص وتوصيات أفضل.';
-
-  @override
   String dailyTargetLabel(Object kcal) {
     return 'من أصل $kcal سعرة حرارية';
   }
+
+  @override
+  String get takeSurveyDesc => 'يرجى إكمال الاستبيان للحصول على نتائج مخصصة.';
 
   @override
   String get age => 'العمر';
@@ -264,7 +257,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get activityLevel => 'مستوى النشاط';
 
   @override
-  String get restrictionsLabel => 'هل لديك حساسية، عدم تحمل أو حالات طبية؟';
+  String get restrictionsLabel => 'القيود / الحساسية';
 
   @override
   String get restrictionsHelper =>
@@ -306,7 +299,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get update => 'تحديث';
 
   @override
-  String get profileSaved => 'تم حفظ الملف الشخصي بنجاح';
+  String get profileSaved => 'تم تحديث الملف الشخصي';
 
   @override
   String get basicInfo => 'المعلومات الأساسية';
@@ -322,4 +315,196 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get next => 'التالي';
+
+  @override
+  String get settings => 'الإعدادات';
+
+  @override
+  String get darkMode => 'الوضع الداكن';
+
+  @override
+  String get on => 'تشغيل';
+
+  @override
+  String get off => 'إيقاف';
+
+  @override
+  String get language => 'اللغة';
+
+  @override
+  String get currentLanguage => 'اللغة الحالية';
+
+  @override
+  String get reminders => 'التذكيرات';
+
+  @override
+  String get dailyReminderDesc => 'احصل على تذكيرات يومية بالسعرات';
+
+  @override
+  String get exportData => 'تصدير البيانات';
+
+  @override
+  String get backupYourData => 'نسخ احتياطي لبياناتك وسجلاتك';
+
+  @override
+  String get importData => 'استيراد البيانات';
+
+  @override
+  String get restoreYourData => 'استعادة البيانات من النسخ الاحتياطي';
+
+  @override
+  String get aboutApp => 'عن التطبيق';
+
+  @override
+  String get aboutDesc =>
+      'متعقب سعرات حرارية غير متصل بالإنترنت مع أطعمة محلية وتركيز على الخصوصية';
+
+  @override
+  String get manageProfiles => 'إدارة الملفات الشخصية';
+
+  @override
+  String get switchProfile => 'تبديل الملف الشخصي';
+
+  @override
+  String get noProfilesYet => 'لا توجد ملفات شخصية بعد';
+
+  @override
+  String get createNewProfile => 'إنشاء ملف شخصي جديد';
+
+  @override
+  String get profileName => 'اسم الملف الشخصي';
+
+  @override
+  String get profileNameHint => 'مثال: فرد العائلة 1';
+
+  @override
+  String get create => 'إنشاء';
+
+  @override
+  String get cancel => 'إلغاء';
+
+  @override
+  String get save => 'حفظ';
+
+  @override
+  String get switchedTo => 'تم التبديل إلى';
+
+  @override
+  String get createdProfile => 'تم إنشاء الملف الشخصي';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get deleteProfile => 'حذف الملف الشخصي';
+
+  @override
+  String get deleteProfileDesc =>
+      'سيؤدي هذا إلى حذف جميع بيانات هذا الملف الشخصي نهائيًا. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get profileDeleted => 'تم حذف الملف الشخصي';
+
+  @override
+  String get selectLanguage => 'اختر اللغة';
+
+  @override
+  String get selectWeightUnit => 'اختر وحدة الوزن';
+
+  @override
+  String get selectHeightUnit => 'اختر وحدة الطول';
+
+  @override
+  String get weightUnit => 'وحدة الوزن';
+
+  @override
+  String get heightUnit => 'وحدة الطول';
+
+  @override
+  String get comingSoon => 'قريباً';
+
+  @override
+  String get rateUs => 'قيمنا';
+
+  @override
+  String get rateUsComingSoon => 'ستتوفر ميزة تقييمنا قريباً!';
+
+  @override
+  String get joinBeta => 'انضم إلى اختبار بيتا';
+
+  @override
+  String get betaComingSoon => 'سيتم إطلاق برنامج اختبار بيتا قريباً!';
+
+  @override
+  String get todayCalories => 'سعرات اليوم';
+
+  @override
+  String get manualEntry => 'إدخال يدوي';
+
+  @override
+  String get failedToCreateProfile => 'فشل في إنشاء الملف الشخصي';
+
+  @override
+  String get failedToDeleteProfile => 'فشل في حذف الملف الشخصي';
+
+  @override
+  String get foodLogged => 'تم تسجيل الطعام بنجاح';
+
+  @override
+  String get historyAndProgress => 'السجل والتقدم';
+
+  @override
+  String get height => 'الطول';
+
+  @override
+  String get currentWeight => 'الوزن الحالي';
+
+  @override
+  String get checkingConnection => 'جارٍ التحقق من الاتصال...';
+
+  @override
+  String get noInternetConnection => 'لا يوجد اتصال بالإنترنت';
+
+  @override
+  String get pleaseConnectToInternet => 'يرجى الاتصال بالإنترنت للمتابعة';
+
+  @override
+  String get tryAgain => 'إعادة المحاولة';
+
+  @override
+  String get trackNutrition => 'تتبع تغذيتك';
+
+  @override
+  String get trackNutritionDesc =>
+      'سجل وجباتك بسهولة وراقب السعرات الحرارية مع الأطعمة المحلية';
+
+  @override
+  String get trackProgress => 'تتبع تقدمك';
+
+  @override
+  String get trackProgressDesc =>
+      'عرض الرسوم البيانية وسجل السعرات الحرارية اليومية والأهداف';
+
+  @override
+  String get personalizedProfile => 'ملف شخصي مخصص';
+
+  @override
+  String get personalizedProfileDesc =>
+      'أنشئ ملفات تعريف متعددة لأفراد الأسرة مع توصيات مخصصة';
+
+  @override
+  String get getStarted => 'ابدأ الآن';
+
+  @override
+  String get profileSwitchedTitle => 'تم تبديل الملف الشخصي';
+
+  @override
+  String get profileSwitchedDesc =>
+      'يجب إعادة تشغيل التطبيق لتطبيق الملف الشخصي الجديد بالكامل. هل تريد إعادة التشغيل الآن؟';
+
+  @override
+  String get later => 'لاحقًا';
+
+  @override
+  String get restartNow => 'إعادة التشغيل الآن';
 }

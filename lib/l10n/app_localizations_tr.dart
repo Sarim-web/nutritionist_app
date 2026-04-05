@@ -9,7 +9,7 @@ class AppLocalizationsTr extends AppLocalizations {
   AppLocalizationsTr([String locale = 'tr']) : super(locale);
 
   @override
-  String get appTitle => 'Beslenme Uzmanı';
+  String get appTitle => 'VitaCalo';
 
   @override
   String get logFood => 'Yiyecek Kaydet';
@@ -32,9 +32,7 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String remaining(Object kcal) {
-    return 'Kalan: $kcal kcal';
-  }
+  String get remaining => 'Kalan';
 
   @override
   String get newDayMessage => 'Yeni gün başladı — kaloriler 0’a sıfırlandı';
@@ -46,7 +44,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get noFoodToday => 'Bugün henüz yiyecek kaydedilmedi';
 
   @override
-  String get addFood => 'Yiyecek ekle';
+  String get addFood => 'Yiyecek Ekle';
 
   @override
   String get foodName => 'Yiyecek adı';
@@ -68,14 +66,13 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get manualModeDesc =>
-      'Kişiselleştirilmiş bir hedef olmadan kalori takip ediyorsunuz.\nYiyecekleri özgürce kaydedin — istediğiniz zaman anketi doldurarak özel hedefler alabilirsiniz.';
+      'Manuel modu kullanıyorsunuz. Kalori hedefi gibi bazı özellikler devre dışı.';
 
   @override
   String get logFoodButton => 'Yiyecek Kaydet';
 
   @override
-  String get switchToPersonalized =>
-      'Kişiselleştirilmiş Moda Geç (Anketi Doldur)';
+  String get switchToPersonalized => 'Kişiselleştirilmiş moda geç';
 
   @override
   String get dailyProgress => 'Günlük İlerleme';
@@ -93,19 +90,22 @@ class AppLocalizationsTr extends AppLocalizations {
   String get editProfile => 'Profili Düzenle';
 
   @override
-  String get startFresh => 'Baştan Başla (Profili Temizle)';
+  String get startFresh => 'Yeni başlangıç';
 
   @override
   String get personalizeJourney => 'Yolculuğunuzu kişiselleştirin';
 
   @override
-  String get takeSurvey => 'Profil Anketini Doldur';
+  String get takeSurvey => 'Anketi doldur';
 
   @override
-  String get continueManual => 'Manuel Modda Devam Et';
+  String get continueManual => 'Manuel modda devam et';
 
   @override
   String get foodAdded => 'Yiyecek eklendi!';
+
+  @override
+  String get entryDeleted => 'Giriş silindi';
 
   @override
   String get all => 'Tümü';
@@ -168,16 +168,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get turkey => 'Türkiye';
 
   @override
-  String get required => 'Zorunlu';
+  String get required => 'Gerekli';
 
   @override
-  String get positiveNumber => 'Pozitif sayı';
+  String get positiveNumber => 'Pozitif bir sayı olmalı';
 
   @override
-  String get positive => 'Pozitif';
-
-  @override
-  String get entryDeleted => 'Kayıt silindi';
+  String get positive => 'Pozitif olmalı';
 
   @override
   String get unknown => 'Bilinmiyor';
@@ -205,23 +202,20 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dietaryPreference => 'Beslenme tercihi';
 
   @override
-  String get restrictions => 'Kısıtlamalar';
+  String get restrictions => 'Kısıtlamalar / Alerjiler';
 
   @override
-  String get clearProfileTitle => 'Profil temizlensin mi?';
+  String get clearProfileTitle => 'Profil silinsin mi?';
 
   @override
   String get clearProfileDesc =>
-      'Bu işlem tüm kayıtlı profil bilgilerini ve kalori günlüklerini silecektir. Yeniden başlamak için anketi tekrar doldurabilirsiniz.';
-
-  @override
-  String get cancel => 'İptal';
+      'Bu tüm kişisel verileri silecek ve manuel moda sıfırlayacaktır.';
 
   @override
   String get clear => 'Temizle';
 
   @override
-  String get profileCleared => 'Profil ve kayıtlar temizlendi';
+  String get profileCleared => 'Profil başarıyla temizlendi';
 
   @override
   String ofTarget(Object kcal) {
@@ -232,13 +226,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get kcalDay => 'kcal/gün';
 
   @override
-  String get takeSurveyDesc =>
-      'Özel bir kalori hedefi ve daha iyi öneriler almak için hızlı profili tamamlayın.';
-
-  @override
   String dailyTargetLabel(Object kcal) {
     return '$kcal kcal üzerinden';
   }
+
+  @override
+  String get takeSurveyDesc =>
+      'Kişisel bilgiler için lütfen anketi tamamlayın.';
 
   @override
   String get age => 'Yaş';
@@ -265,8 +259,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get activityLevel => 'Aktivite seviyesi';
 
   @override
-  String get restrictionsLabel =>
-      'Alerjiler, intoleranslar veya tıbbi durumlar?';
+  String get restrictionsLabel => 'Kısıtlamalar / Alerjiler';
 
   @override
   String get restrictionsHelper =>
@@ -308,7 +301,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get update => 'Güncelle';
 
   @override
-  String get profileSaved => 'Profil başarıyla kaydedildi';
+  String get profileSaved => 'Profil güncellendi';
 
   @override
   String get basicInfo => 'Temel Bilgiler';
@@ -324,4 +317,197 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get next => 'İleri';
+
+  @override
+  String get settings => 'Ayarlar';
+
+  @override
+  String get darkMode => 'Karanlık Mod';
+
+  @override
+  String get on => 'Açık';
+
+  @override
+  String get off => 'Kapalı';
+
+  @override
+  String get language => 'Dil';
+
+  @override
+  String get currentLanguage => 'Mevcut Dil';
+
+  @override
+  String get reminders => 'Hatırlatıcılar';
+
+  @override
+  String get dailyReminderDesc => 'Günlük kalori hatırlatmaları alın';
+
+  @override
+  String get exportData => 'Veri Dışa Aktar';
+
+  @override
+  String get backupYourData => 'Kayıtlarınızı ve ilerlemenizi yedekleyin';
+
+  @override
+  String get importData => 'Veri İçe Aktar';
+
+  @override
+  String get restoreYourData => 'Yedekten verileri geri yükle';
+
+  @override
+  String get aboutApp => 'Uygulama Hakkında';
+
+  @override
+  String get aboutDesc =>
+      'Yerel yiyecekler ve gizlilik odaklı çevrimdışı kalori takipçisi';
+
+  @override
+  String get manageProfiles => 'Profilleri Yönet';
+
+  @override
+  String get switchProfile => 'Profil Değiştir';
+
+  @override
+  String get noProfilesYet => 'Henüz profil yok';
+
+  @override
+  String get createNewProfile => 'Yeni Profil Oluştur';
+
+  @override
+  String get profileName => 'Profil Adı';
+
+  @override
+  String get profileNameHint => 'ör. Aile Üyesi 1';
+
+  @override
+  String get create => 'Oluştur';
+
+  @override
+  String get cancel => 'İptal';
+
+  @override
+  String get save => 'Kaydet';
+
+  @override
+  String get switchedTo => 'Değiştirildi';
+
+  @override
+  String get createdProfile => 'Profil oluşturuldu';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get deleteProfile => 'Profili Sil';
+
+  @override
+  String get deleteProfileDesc =>
+      'Bu işlem bu profilin tüm verilerini kalıcı olarak siler. Bu işlem geri alınamaz.';
+
+  @override
+  String get profileDeleted => 'Profil silindi';
+
+  @override
+  String get selectLanguage => 'Dil Seç';
+
+  @override
+  String get selectWeightUnit => 'Ağırlık Birimi Seç';
+
+  @override
+  String get selectHeightUnit => 'Boy Birimi Seç';
+
+  @override
+  String get weightUnit => 'Ağırlık Birimi';
+
+  @override
+  String get heightUnit => 'Boy Birimi';
+
+  @override
+  String get comingSoon => 'Yakında';
+
+  @override
+  String get rateUs => 'Bizi Değerlendirin';
+
+  @override
+  String get rateUsComingSoon => 'Puanlama özelliği yakında gelecek!';
+
+  @override
+  String get joinBeta => 'Beta Test\'e Katıl';
+
+  @override
+  String get betaComingSoon => 'Beta test programı yakında gelecek!';
+
+  @override
+  String get todayCalories => 'Bugünün Kalorileri';
+
+  @override
+  String get manualEntry => 'Manuel Giriş';
+
+  @override
+  String get failedToCreateProfile => 'Profil oluşturulamadı';
+
+  @override
+  String get failedToDeleteProfile => 'Profil silinemedi';
+
+  @override
+  String get foodLogged => 'Yemek başarıyla kaydedildi';
+
+  @override
+  String get historyAndProgress => 'Geçmiş ve ilerleme';
+
+  @override
+  String get height => 'Boy';
+
+  @override
+  String get currentWeight => 'Mevcut kilo';
+
+  @override
+  String get checkingConnection => 'Bağlantı kontrol ediliyor...';
+
+  @override
+  String get noInternetConnection => 'İnternet Bağlantısı Yok';
+
+  @override
+  String get pleaseConnectToInternet =>
+      'Devam etmek için lütfen internete bağlanın';
+
+  @override
+  String get tryAgain => 'Tekrar Dene';
+
+  @override
+  String get trackNutrition => 'Beslenmeni Takip Et';
+
+  @override
+  String get trackNutritionDesc =>
+      'Öğünlerini kolayca kaydet ve bölgeye özel gıdalarla kalorilerini izle';
+
+  @override
+  String get trackProgress => 'Gelişimini Takip Et';
+
+  @override
+  String get trackProgressDesc =>
+      'Günlük kalori alımının ve hedeflerinin grafiklerini ve geçmişini görüntüle';
+
+  @override
+  String get personalizedProfile => 'Kişiselleştirilmiş Profil';
+
+  @override
+  String get personalizedProfileDesc =>
+      'Aile üyeleri için özelleştirilmiş önerilerle birden fazla profil oluşturun';
+
+  @override
+  String get getStarted => 'Hadi Başlayalım';
+
+  @override
+  String get profileSwitchedTitle => 'Profil Değiştirildi';
+
+  @override
+  String get profileSwitchedDesc =>
+      'Yeni profilin tamamen uygulanması için uygulamanın yeniden başlatılması gerekiyor. Şimdi yeniden başlatılsın mı?';
+
+  @override
+  String get later => 'Sonra';
+
+  @override
+  String get restartNow => 'Şimdi Yeniden Başlat';
 }

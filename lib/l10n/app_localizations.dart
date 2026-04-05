@@ -117,7 +117,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'Nutritionist'**
+  /// **'VitaCalo'**
   String get appTitle;
 
   /// No description provided for @logFood.
@@ -159,8 +159,8 @@ abstract class AppLocalizations {
   /// No description provided for @remaining.
   ///
   /// In en, this message translates to:
-  /// **'Remaining: {kcal} kcal'**
-  String remaining(Object kcal);
+  /// **'Remaining'**
+  String get remaining;
 
   /// No description provided for @newDayMessage.
   ///
@@ -225,7 +225,7 @@ abstract class AppLocalizations {
   /// No description provided for @manualModeDesc.
   ///
   /// In en, this message translates to:
-  /// **'You are tracking calories without a personalized goal.\nLog foods freely — you can take the survey anytime for custom targets.'**
+  /// **'You\'re using manual mode. Some features like calorie target are disabled.'**
   String get manualModeDesc;
 
   /// No description provided for @logFoodButton.
@@ -237,7 +237,7 @@ abstract class AppLocalizations {
   /// No description provided for @switchToPersonalized.
   ///
   /// In en, this message translates to:
-  /// **'Switch to Personalized Mode (Take Survey)'**
+  /// **'Switch to Personalized Mode'**
   String get switchToPersonalized;
 
   /// No description provided for @dailyProgress.
@@ -273,7 +273,7 @@ abstract class AppLocalizations {
   /// No description provided for @startFresh.
   ///
   /// In en, this message translates to:
-  /// **'Start Fresh (Clear Profile)'**
+  /// **'Start Fresh'**
   String get startFresh;
 
   /// No description provided for @personalizeJourney.
@@ -285,7 +285,7 @@ abstract class AppLocalizations {
   /// No description provided for @takeSurvey.
   ///
   /// In en, this message translates to:
-  /// **'Take Profile Survey'**
+  /// **'Take Survey'**
   String get takeSurvey;
 
   /// No description provided for @continueManual.
@@ -299,6 +299,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Food added!'**
   String get foodAdded;
+
+  /// No description provided for @entryDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry deleted'**
+  String get entryDeleted;
 
   /// No description provided for @all.
   ///
@@ -429,20 +435,14 @@ abstract class AppLocalizations {
   /// No description provided for @positiveNumber.
   ///
   /// In en, this message translates to:
-  /// **'Positive number'**
+  /// **'Must be a positive number'**
   String get positiveNumber;
 
   /// No description provided for @positive.
   ///
   /// In en, this message translates to:
-  /// **'Positive'**
+  /// **'Must be positive'**
   String get positive;
-
-  /// No description provided for @entryDeleted.
-  ///
-  /// In en, this message translates to:
-  /// **'Entry deleted'**
-  String get entryDeleted;
 
   /// No description provided for @unknown.
   ///
@@ -495,7 +495,7 @@ abstract class AppLocalizations {
   /// No description provided for @restrictions.
   ///
   /// In en, this message translates to:
-  /// **'Restrictions'**
+  /// **'Restrictions / Allergies'**
   String get restrictions;
 
   /// No description provided for @clearProfileTitle.
@@ -507,14 +507,8 @@ abstract class AppLocalizations {
   /// No description provided for @clearProfileDesc.
   ///
   /// In en, this message translates to:
-  /// **'This will remove all saved profile info and calorie logs. You can take the survey again for a fresh start.'**
+  /// **'This will remove all your personal data and reset to manual mode.'**
   String get clearProfileDesc;
-
-  /// No description provided for @cancel.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel'**
-  String get cancel;
 
   /// No description provided for @clear.
   ///
@@ -525,7 +519,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileCleared.
   ///
   /// In en, this message translates to:
-  /// **'Profile and logs cleared'**
+  /// **'Profile cleared successfully'**
   String get profileCleared;
 
   /// No description provided for @ofTarget.
@@ -540,17 +534,17 @@ abstract class AppLocalizations {
   /// **'kcal/day'**
   String get kcalDay;
 
-  /// No description provided for @takeSurveyDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Complete the quick profile to get a custom calorie goal and better recommendations.'**
-  String get takeSurveyDesc;
-
   /// No description provided for @dailyTargetLabel.
   ///
   /// In en, this message translates to:
   /// **'of {kcal} kcal'**
   String dailyTargetLabel(Object kcal);
+
+  /// No description provided for @takeSurveyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Please complete your profile survey to get personalized insights.'**
+  String get takeSurveyDesc;
 
   /// No description provided for @age.
   ///
@@ -603,7 +597,7 @@ abstract class AppLocalizations {
   /// No description provided for @restrictionsLabel.
   ///
   /// In en, this message translates to:
-  /// **'Allergies, intolerances or medical conditions?'**
+  /// **'Restrictions / Allergies'**
   String get restrictionsLabel;
 
   /// No description provided for @restrictionsHelper.
@@ -681,7 +675,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileSaved.
   ///
   /// In en, this message translates to:
-  /// **'Profile saved successfully'**
+  /// **'Profile updated'**
   String get profileSaved;
 
   /// No description provided for @basicInfo.
@@ -713,6 +707,378 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next'**
   String get next;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @darkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get darkMode;
+
+  /// No description provided for @on.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get on;
+
+  /// No description provided for @off.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get off;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @currentLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Language'**
+  String get currentLanguage;
+
+  /// No description provided for @reminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get reminders;
+
+  /// No description provided for @dailyReminderDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get daily calorie reminders'**
+  String get dailyReminderDesc;
+
+  /// No description provided for @exportData.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Data'**
+  String get exportData;
+
+  /// No description provided for @backupYourData.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup your logs and progress'**
+  String get backupYourData;
+
+  /// No description provided for @importData.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Data'**
+  String get importData;
+
+  /// No description provided for @restoreYourData.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore your data from backup'**
+  String get restoreYourData;
+
+  /// No description provided for @aboutApp.
+  ///
+  /// In en, this message translates to:
+  /// **'About App'**
+  String get aboutApp;
+
+  /// No description provided for @aboutDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline calorie tracker with local foods and privacy focus'**
+  String get aboutDesc;
+
+  /// No description provided for @manageProfiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Profiles'**
+  String get manageProfiles;
+
+  /// No description provided for @switchProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch Profile'**
+  String get switchProfile;
+
+  /// No description provided for @noProfilesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No profiles yet'**
+  String get noProfilesYet;
+
+  /// No description provided for @createNewProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Profile'**
+  String get createNewProfile;
+
+  /// No description provided for @profileName.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Name'**
+  String get profileName;
+
+  /// No description provided for @profileNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Family Member 1'**
+  String get profileNameHint;
+
+  /// No description provided for @create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @switchedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Switched to'**
+  String get switchedTo;
+
+  /// No description provided for @createdProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Created profile'**
+  String get createdProfile;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @deleteProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Profile'**
+  String get deleteProfile;
+
+  /// No description provided for @deleteProfileDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete all data for this profile. This action cannot be undone.'**
+  String get deleteProfileDesc;
+
+  /// No description provided for @profileDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile deleted'**
+  String get profileDeleted;
+
+  /// No description provided for @selectLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language'**
+  String get selectLanguage;
+
+  /// No description provided for @selectWeightUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Weight Unit'**
+  String get selectWeightUnit;
+
+  /// No description provided for @selectHeightUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Height Unit'**
+  String get selectHeightUnit;
+
+  /// No description provided for @weightUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Unit'**
+  String get weightUnit;
+
+  /// No description provided for @heightUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Height Unit'**
+  String get heightUnit;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
+
+  /// No description provided for @rateUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Us'**
+  String get rateUs;
+
+  /// No description provided for @rateUsComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Us feature coming soon!'**
+  String get rateUsComingSoon;
+
+  /// No description provided for @joinBeta.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Beta Testing'**
+  String get joinBeta;
+
+  /// No description provided for @betaComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Beta Testing program coming soon!'**
+  String get betaComingSoon;
+
+  /// No description provided for @todayCalories.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Calories'**
+  String get todayCalories;
+
+  /// No description provided for @manualEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual Entry'**
+  String get manualEntry;
+
+  /// No description provided for @failedToCreateProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create profile'**
+  String get failedToCreateProfile;
+
+  /// No description provided for @failedToDeleteProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete profile'**
+  String get failedToDeleteProfile;
+
+  /// No description provided for @foodLogged.
+  ///
+  /// In en, this message translates to:
+  /// **'Food logged successfully'**
+  String get foodLogged;
+
+  /// No description provided for @historyAndProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'History & Progress'**
+  String get historyAndProgress;
+
+  /// No description provided for @height.
+  ///
+  /// In en, this message translates to:
+  /// **'Height'**
+  String get height;
+
+  /// No description provided for @currentWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Weight'**
+  String get currentWeight;
+
+  /// No description provided for @checkingConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking connection...'**
+  String get checkingConnection;
+
+  /// No description provided for @noInternetConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'No Internet Connection'**
+  String get noInternetConnection;
+
+  /// No description provided for @pleaseConnectToInternet.
+  ///
+  /// In en, this message translates to:
+  /// **'Please connect to the internet to continue'**
+  String get pleaseConnectToInternet;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get tryAgain;
+
+  /// No description provided for @trackNutrition.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Your Nutrition'**
+  String get trackNutrition;
+
+  /// No description provided for @trackNutritionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Easily log meals and monitor calories with region-specific foods'**
+  String get trackNutritionDesc;
+
+  /// No description provided for @trackProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Your Progress'**
+  String get trackProgress;
+
+  /// No description provided for @trackProgressDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'View charts and history of your daily calorie intake and goals'**
+  String get trackProgressDesc;
+
+  /// No description provided for @personalizedProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Personalized Profile'**
+  String get personalizedProfile;
+
+  /// No description provided for @personalizedProfileDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Create multiple profiles for family members with customized recommendations'**
+  String get personalizedProfileDesc;
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
+
+  /// No description provided for @profileSwitchedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Switched'**
+  String get profileSwitchedTitle;
+
+  /// No description provided for @profileSwitchedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The app needs to restart to fully apply the new profile. Restart now?'**
+  String get profileSwitchedDesc;
+
+  /// No description provided for @later.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get later;
+
+  /// No description provided for @restartNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart Now'**
+  String get restartNow;
 }
 
 class _AppLocalizationsDelegate

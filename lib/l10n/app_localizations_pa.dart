@@ -9,7 +9,7 @@ class AppLocalizationsPa extends AppLocalizations {
   AppLocalizationsPa([String locale = 'pa']) : super(locale);
 
   @override
-  String get appTitle => 'نیوٹریشنسٹ';
+  String get appTitle => 'VitaCalo';
 
   @override
   String get logFood => 'کھانا لاگ کرو';
@@ -18,7 +18,7 @@ class AppLocalizationsPa extends AppLocalizations {
   String get dashboard => 'ڈیش بورڈ';
 
   @override
-  String get yourProfile => 'تہاڈا پروفائل';
+  String get yourProfile => 'تہاڈی پروفائل';
 
   @override
   String get commonFoods => 'عام کھانے';
@@ -32,9 +32,7 @@ class AppLocalizationsPa extends AppLocalizations {
   }
 
   @override
-  String remaining(Object kcal) {
-    return 'باقی: $kcal کیلوریز';
-  }
+  String get remaining => 'باقی';
 
   @override
   String get newDayMessage => 'نواں دن شروع ہو گیا — کیلوریز 0 تے ری سیٹ';
@@ -68,13 +66,13 @@ class AppLocalizationsPa extends AppLocalizations {
 
   @override
   String get manualModeDesc =>
-      'تسی بغیر ذاتی ہدف دے کیلوریز ٹریک کر رہے او۔\nکھانے آزادانہ لاگ کرو — بعد وچ سروے لے سکو۔';
+      'تسی دستی موڈ استعمال کر رہے او۔ کیلوریز دا ہدف ورگیاں سہولتاں بند نیں۔';
 
   @override
   String get logFoodButton => 'کھانا لاگ کرو';
 
   @override
-  String get switchToPersonalized => 'ذاتی موڈ وچ جاؤ (سروے کرو)';
+  String get switchToPersonalized => 'ذاتی موڈ وچ سوئچ کرو';
 
   @override
   String get dailyProgress => 'روزانہ پیش رفت';
@@ -92,19 +90,22 @@ class AppLocalizationsPa extends AppLocalizations {
   String get editProfile => 'پروفائل بدلو';
 
   @override
-  String get startFresh => 'نواں شروع کرو (پروفائل صاف کرو)';
+  String get startFresh => 'نواں آغاز';
 
   @override
   String get personalizeJourney => 'اپنا سفر ذاتی بناؤ';
 
   @override
-  String get takeSurvey => 'پروفائل سروے کرو';
+  String get takeSurvey => 'سروے کرو';
 
   @override
-  String get continueManual => 'مینوئل موڈ وچ جاری رکھو';
+  String get continueManual => 'دستی موڈ وچ جاری رکھو';
 
   @override
   String get foodAdded => 'کھانا شامل ہو گیا!';
+
+  @override
+  String get entryDeleted => 'اندراج مٹا دتا گیا';
 
   @override
   String get all => 'سب';
@@ -167,16 +168,13 @@ class AppLocalizationsPa extends AppLocalizations {
   String get turkey => 'ترکی';
 
   @override
-  String get required => 'ضروری';
+  String get required => 'لازمی';
 
   @override
-  String get positiveNumber => 'مثبت نمبر';
+  String get positiveNumber => 'مثبت نمبر ہونا چاہیدا اے';
 
   @override
-  String get positive => 'مثبت';
-
-  @override
-  String get entryDeleted => 'اندراج حذف ہو گیا';
+  String get positive => 'مثبت ہونا چاہیدا اے';
 
   @override
   String get unknown => 'نامعلوم';
@@ -203,23 +201,20 @@ class AppLocalizationsPa extends AppLocalizations {
   String get dietaryPreference => 'غذائی ترجیح';
 
   @override
-  String get restrictions => 'پابندیاں';
+  String get restrictions => 'پابندیاں / الرجی';
 
   @override
-  String get clearProfileTitle => 'پروفائل صاف کرو؟';
+  String get clearProfileTitle => 'پروفائل صاف کرنی اے؟';
 
   @override
   String get clearProfileDesc =>
-      'ایس نال ساری محفوظ پروفائل معلومات تے کیلوری لاگز مٹ جان گے۔';
-
-  @override
-  String get cancel => 'منسوخ';
+      'ایہہ سارا ذاتی ڈیٹا مٹا دے گا تے دستی موڈ وچ واپس لے آئے گا۔';
 
   @override
   String get clear => 'صاف کرو';
 
   @override
-  String get profileCleared => 'پروفائل تے لاگز صاف ہو گئے';
+  String get profileCleared => 'پروفائل کامیابی نال صاف ہو گئی';
 
   @override
   String ofTarget(Object kcal) {
@@ -230,13 +225,12 @@ class AppLocalizationsPa extends AppLocalizations {
   String get kcalDay => 'کیلوریز/دن';
 
   @override
-  String get takeSurveyDesc =>
-      'ذاتی کیلوری ہدف حاصل کرنے لئی مختصر سروے مکمل کرو';
-
-  @override
   String dailyTargetLabel(Object kcal) {
     return '$kcal کیلوریز وچوں';
   }
+
+  @override
+  String get takeSurveyDesc => 'ذاتی مشوریاں لئی پروفائل سروے مکمل کرو۔';
 
   @override
   String get age => 'عمر';
@@ -263,7 +257,7 @@ class AppLocalizationsPa extends AppLocalizations {
   String get activityLevel => 'سرگرمی دی سطح';
 
   @override
-  String get restrictionsLabel => 'الرجی، عدم برداشت یا طبی مسئلہ؟';
+  String get restrictionsLabel => 'پابندیاں / الرجی';
 
   @override
   String get restrictionsHelper =>
@@ -303,7 +297,7 @@ class AppLocalizationsPa extends AppLocalizations {
   String get update => 'اپ ڈیٹ';
 
   @override
-  String get profileSaved => 'پروفائل کامیابی نال محفوظ ہو گیا';
+  String get profileSaved => 'پروفائل اپڈیٹ ہو گئی';
 
   @override
   String get basicInfo => 'بنیادی معلومات';
@@ -318,5 +312,195 @@ class AppLocalizationsPa extends AppLocalizations {
   String get location => 'مقام';
 
   @override
-  String get next => 'اگلا';
+  String get next => 'اگے';
+
+  @override
+  String get settings => 'ترتیباں';
+
+  @override
+  String get darkMode => 'ڈارک موڈ';
+
+  @override
+  String get on => 'آن';
+
+  @override
+  String get off => 'آف';
+
+  @override
+  String get language => 'زبان';
+
+  @override
+  String get currentLanguage => 'موجودہ زبان';
+
+  @override
+  String get reminders => 'یاد دہانیاں';
+
+  @override
+  String get dailyReminderDesc => 'روزانہ کیلوری دی یاد دہانی ملے';
+
+  @override
+  String get exportData => 'ڈیٹا برآمد کرو';
+
+  @override
+  String get backupYourData => 'اپنے لاگز تے ترقی دا بیک اپ بناؤ';
+
+  @override
+  String get importData => 'ڈیٹا درآمد کرو';
+
+  @override
+  String get restoreYourData => 'بیک اپ توں ڈیٹا بحال کرو';
+
+  @override
+  String get aboutApp => 'ایپ بارے';
+
+  @override
+  String get aboutDesc => 'آف لائن کیلوری ٹریکر – لوکل کھانے تے رازداری نال';
+
+  @override
+  String get manageProfiles => 'پروفائلز دا انتظام';
+
+  @override
+  String get switchProfile => 'پروفائل بدلو';
+
+  @override
+  String get noProfilesYet => 'اجے کوئی پروفائل نئیں';
+
+  @override
+  String get createNewProfile => 'نیا پروفائل بناؤ';
+
+  @override
+  String get profileName => 'پروفائل دا ناں';
+
+  @override
+  String get profileNameHint => 'مثلاً فیملی ممبر 1';
+
+  @override
+  String get create => 'بناؤ';
+
+  @override
+  String get cancel => 'منسوخ';
+
+  @override
+  String get save => 'سنبھالو';
+
+  @override
+  String get switchedTo => 'بدل گیا';
+
+  @override
+  String get createdProfile => 'پروفائل بن گیا';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get deleteProfile => 'پروفائل مٹاؤ';
+
+  @override
+  String get deleteProfileDesc =>
+      'ایہ پروفائل دا سارا ڈیٹا ہمیشہ لئی مٹا دیوے گا۔ ایہ کم واپس نئیں ہو سکدا۔';
+
+  @override
+  String get profileDeleted => 'پروفائل مٹ گیا';
+
+  @override
+  String get selectLanguage => 'زبان چنو';
+
+  @override
+  String get selectWeightUnit => 'وزن دی اکائی چنو';
+
+  @override
+  String get selectHeightUnit => 'لمبائی دی اکائی چنو';
+
+  @override
+  String get weightUnit => 'وزن دی اکائی';
+
+  @override
+  String get heightUnit => 'لمبائی دی اکائی';
+
+  @override
+  String get comingSoon => 'جلد آرہا اے';
+
+  @override
+  String get rateUs => 'ساڈے نوں ریٹ کرو';
+
+  @override
+  String get rateUsComingSoon => 'ریٹ کرو فیچر جلد آ رہیا اے!';
+
+  @override
+  String get joinBeta => 'بیٹا ٹیسٹنگ وچ شامل ہو';
+
+  @override
+  String get betaComingSoon => 'بیٹا ٹیسٹنگ پروگرام جلد آ رہیا اے!';
+
+  @override
+  String get todayCalories => 'اج دی کیلوریز';
+
+  @override
+  String get manualEntry => 'ہاتھوں اندراج';
+
+  @override
+  String get failedToCreateProfile => 'پروفائل بنانے وچ ناکامی';
+
+  @override
+  String get failedToDeleteProfile => 'پروفائل مٹاؤن وچ ناکامی';
+
+  @override
+  String get foodLogged => 'خوراک کامیابی نال لاگ ہو گئی';
+
+  @override
+  String get historyAndProgress => 'تاریخ تے پیش رفت';
+
+  @override
+  String get height => 'قد';
+
+  @override
+  String get currentWeight => 'موجودہ وزن';
+
+  @override
+  String get checkingConnection => 'کنکشن چیک ہو رہا اے...';
+
+  @override
+  String get noInternetConnection => 'انٹرنیٹ نہیں چل رہا';
+
+  @override
+  String get pleaseConnectToInternet =>
+      'آگے ودھن لئی مہربانی کر کے انٹرنیٹ نال جڑو';
+
+  @override
+  String get tryAgain => 'فیر کوشش کرو';
+
+  @override
+  String get trackNutrition => 'اپنی خوراک دا حساب رکھو';
+
+  @override
+  String get trackNutritionDesc => 'کھان پین دا ریکارڈ رکھو تے کیلوریز چیک کرو';
+
+  @override
+  String get trackProgress => 'اپنی ترقی دیکھو';
+
+  @override
+  String get trackProgressDesc => 'روزانہ دے کیلوری چارٹ تے ہسٹری دیکھو';
+
+  @override
+  String get personalizedProfile => 'اپنی پروفائل';
+
+  @override
+  String get personalizedProfileDesc =>
+      'گھر والیاں لئی وکھ وکھ پروفائل تے مشورے بناؤ';
+
+  @override
+  String get getStarted => 'شروع کرو';
+
+  @override
+  String get profileSwitchedTitle => 'پروفائل بدل گئی';
+
+  @override
+  String get profileSwitchedDesc =>
+      'نواں پروفائل مکمل طور تے لاگو کرن لئی ایپ نوں دوبارہ شروع کرنا ضروری ہے۔ ہن ری اسٹارٹ کرنا ہے؟';
+
+  @override
+  String get later => 'بعد وچ';
+
+  @override
+  String get restartNow => 'ہن ری اسٹارٹ کرو';
 }

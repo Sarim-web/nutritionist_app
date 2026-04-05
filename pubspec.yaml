@@ -1,5 +1,5 @@
-name: nutritionist_app
-description: "Offline calorie tracker with local foods & privacy focus"
+name: nutritrack
+description: "VitaCalo - Offline calorie tracker with local foods & privacy focus"
 publish_to: 'none'
 version: 0.1.0+1
 
@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  provider: ^6.1.2
 
   # Localization (required for ARB / gen-l10n)
   flutter_localizations:
@@ -21,6 +23,11 @@ dependencies:
   go_router: ^17.0.1        # Stable version (17.0.1 is very new — optional downgrade if issues)
   image_picker: ^1.1.2
   fl_chart: ^1.1.1         # ← FIXED: Use this stable version (avoids tooltip param rename issues)
+
+  # Data export/import and file handling
+  csv: ^6.0.0
+  path_provider: ^2.1.5
+  share_plus: ^12.0.1
 
   # Optional / future features
   connectivity_plus: ^7.0.0
