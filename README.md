@@ -1,4 +1,4 @@
-# NutriTrack
+# VitaCalo
 
 A comprehensive offline calorie and nutrition tracker with support for multiple languages and dietary preferences. NutriTrack provides personalized nutrition guidance using local food databases while maintaining complete privacy with offline-first architecture.
 
@@ -9,3 +9,4 @@ A comprehensive offline calorie and nutrition tracker with support for multiple 
 - Offline-first architecture
 - Privacy-focused design
 - Local food databases
+- Multi-profile support
